@@ -88,7 +88,7 @@ export default function LoginPage() {
         spread: 70,
         origin: { y: 0.6 }
       });
-      showToast('Desk session secured! Welcome to BugStudio.', 'success');
+      showToast('Desk session secured! Welcome to DevTrace.', 'success');
       dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
     } catch (err: any) {
       console.error(err);
@@ -101,7 +101,7 @@ export default function LoginPage() {
             spread: 70,
             origin: { y: 0.6 }
           });
-          showToast('Account created and logged in! Welcome to BugStudio.', 'success');
+          showToast('Account created and logged in! Welcome to DevTrace.', 'success');
           dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
         } catch (regErr: any) {
           showToast(`Auth error: ${regErr.message}`, 'error');

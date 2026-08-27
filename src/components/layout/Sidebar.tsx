@@ -2,7 +2,7 @@ import React from 'react';
 import {
   List, LayoutGrid, BarChart2, ShieldAlert, GitBranch,
   Search, Flame, HelpCircle, UserCheck, GitPullRequest, Star,
-  Atom, Database, ShieldCheck, Layers, Bug, Sparkles, Calendar, Smartphone, Palette
+  Atom, Database, ShieldCheck, Layers, Bug, Sparkles, Calendar, Smartphone, Palette, Users, Settings
 } from 'lucide-react';
 import { useBugs } from '../../context/BugContext';
 
@@ -25,64 +25,53 @@ const STATUS_COLORS: Record<string, string> = {
   CLOSED: 'var(--text-muted)',
 };
 
-// Peeking mascot component
-const PeekingMascot = () => (
+// Bottom detective mascot profile card with XP progress
+const DetectiveProfileCard = () => (
   <div style={{
-    position: 'absolute',
-    bottom: '-12px',
-    left: '24px',
-    zIndex: 5,
-    pointerEvents: 'none',
+    background: '#1A2233',
+    border: '2.5px solid var(--accent-yellow)',
+    borderRadius: '8px',
+    padding: '12px',
+    boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+    gap: '10px',
+    alignItems: 'center',
+    transform: 'rotate(-1deg)',
+    margin: '16px 12px 12px 12px'
   }}>
-    {/* Speech Bubble doodle */}
+    {/* Detective Mascot mini drawing */}
     <div style={{
-      background: 'var(--paper-yellow)',
-      color: 'var(--text-dark)',
-      border: '2px solid var(--text-dark)',
-      borderRadius: '8px',
-      padding: '4px 8px',
-      fontSize: '0.75rem',
-      fontWeight: 'bold',
-      fontFamily: 'var(--font-hand)',
-      boxShadow: '2px 2px 0px rgba(0,0,0,0.5)',
-      transform: 'rotate(-4deg) translateY(4px)',
-      position: 'relative'
+      width: '38px',
+      height: '38px',
+      borderRadius: '50%',
+      background: '#F9F5E9',
+      border: '1.5px solid #111827',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0
     }}>
-      Fix them all! 🐛
-      <div style={{
-        position: 'absolute',
-        bottom: '-5px',
-        left: '20px',
-        width: '0',
-        height: '0',
-        borderLeft: '5px solid transparent',
-        borderRight: '5px solid transparent',
-        borderTop: '5px solid var(--text-dark)'
-      }}></div>
+      <svg viewBox="0 0 100 80" width="24" height="18" fill="#111827" stroke="currentColor" strokeWidth="6">
+        <path d="M 20 60 C 10 20, 90 20, 80 60" fill="#EF4444" />
+        <circle cx="38" cy="40" r="3" />
+        <circle cx="62" cy="40" r="3" />
+        <path d="M 25 15 Q 15 5 5 10 M 75 15 Q 85 5 95 10" strokeWidth="4" />
+      </svg>
     </div>
-    
-    {/* Head of Bug peeking */}
-    <svg 
-      viewBox="0 0 100 60" 
-      width="44" 
-      height="30" 
-      fill="none" 
-      stroke="var(--text-white)" 
-      strokeWidth="6" 
-      strokeLinecap="round"
-      style={{ animation: 'mascot-wobble 3s infinite ease-in-out' }}
-    >
-      <path d="M 20 60 C 15 20, 85 20, 80 60" fill="var(--bg-surface)" stroke="currentColor" />
-      <circle cx="38" cy="40" r="4" fill="currentColor" />
-      <circle cx="62" cy="40" r="4" fill="currentColor" />
-      <path d="M 45 50 Q 50 54 55 50" stroke="currentColor" strokeWidth="4" fill="none" />
-      {/* Antennas */}
-      <path d="M 32 25 Q 24 10 16 14" />
-      <path d="M 68 25 Q 76 10 84 14" />
-    </svg>
+
+    {/* Text info and XP bar */}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      <span style={{ fontSize: '0.82rem', fontWeight: 900, color: '#FFFFFF' }}>Det. Triveni</span>
+      <span style={{ fontSize: '0.68rem', color: '#FBBF24', fontFamily: 'var(--font-hand)', fontWeight: 'bold' }}>Lead Clue Collector</span>
+      
+      {/* XP Progress Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+        <div style={{ flex: 1, height: '6px', background: '#111827', borderRadius: '3px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ width: '68%', height: '100%', background: '#FBBF24' }} />
+        </div>
+        <span style={{ fontSize: '0.6rem', fontWeight: 'bold', color: '#9CA3AF' }}>68% XP</span>
+      </div>
+    </div>
   </div>
 );
 
@@ -93,31 +82,30 @@ export default function Sidebar() {
   const openCount = bugs.filter(b => !['CLOSED'].includes(b.status)).length;
 
   const views = [
-    { id: 'list', icon: <List size={15} />, label: 'All Sketchnotes', count: openCount },
-    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Sticky Kanban', count: null },
-    { id: 'graph', icon: <GitBranch size={15} />, label: 'Dependency Graph', count: null },
-    { id: 'dashboard', icon: <Layers size={15} />, label: 'Desk Dashboard', count: null },
-    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'BugStudio Analytics', count: null },
+    { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null },
+    { id: 'list', icon: <Bug size={15} />, label: 'Bugs', count: openCount },
+    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Board', count: null },
+    { id: 'graph', icon: <GitBranch size={15} />, label: 'Reports', count: null },
+    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'Analytics', count: null },
     { id: 'assistant', icon: <Sparkles size={15} />, label: 'AI Assistant', count: null },
-    { id: 'sprint', icon: <Calendar size={15} />, label: 'Sprint Planner', count: null },
+    { id: 'team', icon: <Users size={15} />, label: 'Team', count: null },
+    { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null },
     { id: 'sketch', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null },
-    { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync Station', count: null },
-    { id: 'mobile', icon: <Smartphone size={15} />, label: 'Mobile Workspace', count: null },
-    { id: 'security', icon: <ShieldAlert size={15} />, label: 'Security Embargo', count: metrics.securityEmbargoes || null },
-    { id: 'search', icon: <Search size={15} />, label: 'Notebook Search', count: null },
+    { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null },
   ] as const;
 
   return (
     <aside className="sidebar" style={{ position: 'relative' }}>
       {/* Views */}
-      <div className="sidebar-section-label">Sketchbook Views</div>
+      <div className="sidebar-section-label">Workspace Views</div>
       {views.map(v => (
         <div
           key={v.id}
           className={`sidebar-item ${activeView === v.id ? 'active' : ''}`}
+          style={activeView === v.id ? { background: '#FBBF24', color: '#111827', fontWeight: 800, borderRadius: '4px', boxShadow: '2px 2px 0px rgba(0,0,0,0.95)' } : {}}
           onClick={() => dispatch({ type: 'SET_VIEW', payload: v.id as typeof activeView })}
         >
-          <span className="sidebar-item-icon">{v.icon}</span>
+          <span className="sidebar-item-icon" style={activeView === v.id ? { color: '#111827' } : {}}>{v.icon}</span>
           <span>{v.label}</span>
           {v.count !== null && v.count !== undefined && v.count > 0 && (
             <span className="sidebar-item-count" style={
@@ -209,10 +197,8 @@ export default function Sidebar() {
         );
       })}
       
-      {/* Spacer to push mascot down */}
-      <div style={{ height: '70px', flexShrink: 0 }} />
-      
-      <PeekingMascot />
+      {/* Detective Profile Card */}
+      <DetectiveProfileCard />
     </aside>
   );
 }

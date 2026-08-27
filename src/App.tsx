@@ -19,6 +19,8 @@ import LoginPage from './components/layout/LoginPage';
 import ToastContainer from './components/common/Toast';
 import SketchBoardView from './components/analytics/SketchBoardView';
 import GithubSyncView from './components/github/GithubSyncView';
+import TeamView from './components/team/TeamView';
+import SettingsView from './components/settings/SettingsView';
 import './index.css';
 
 function AppInner() {
@@ -86,6 +88,8 @@ function AppInner() {
       case 'security':  return <SecurityPortal />;
       case 'graph':     return <DependencyGraph />;
       case 'search':    return <AdvancedSearch />;
+      case 'team':      return <TeamView />;
+      case 'settings':  return <SettingsView />;
       default:          return <BugListView />;
     }
   };
