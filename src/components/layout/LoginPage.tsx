@@ -1,3 +1,9 @@
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
+
+import { auth } from '../../firebase';
 import React, { useState } from 'react';
 import { useBugs } from '../../context/BugContext';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
@@ -65,21 +71,42 @@ export default function LoginPage() {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
       showToast('Scribe your credentials before logging!', 'error');
       return;
     }
 
-    confetti({
-      particleCount: 140,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    
-    showToast('Desk session secured! Welcome to BugStudio.', 'success');
-    dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      confetti({
+        particleCount: 140,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      showToast('Desk session secured! Welcome to BugStudio.', 'success');
+      dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+    } catch (err: any) {
+      console.error(err);
+      // Auto-register convenience for testing or fallback message
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          confetti({
+            particleCount: 140,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+          showToast('Account created and logged in! Welcome to BugStudio.', 'success');
+          dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+        } catch (regErr: any) {
+          showToast(`Auth error: ${regErr.message}`, 'error');
+        }
+      } else {
+        showToast(`Auth error: ${err.message}`, 'error');
+      }
+    }
   };
 
   const handleEnterWorkspace = () => {
