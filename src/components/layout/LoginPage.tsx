@@ -1,6 +1,9 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
 } from 'firebase/auth';
 
 import { auth } from '../../firebase';
@@ -109,14 +112,38 @@ export default function LoginPage() {
     }
   };
 
-  const handleEnterWorkspace = () => {
-    confetti({
-      particleCount: 140,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    showToast('Secure social stamp authorized! Welcome to BugStudio.', 'success');
-    dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      confetti({
+        particleCount: 140,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      showToast('Successfully logged in with Google! 🛡️', 'success');
+      dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+    } catch (err: any) {
+      console.error(err);
+      showToast(`Google Auth error: ${err.message}`, 'error');
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    const provider = new GithubAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      confetti({
+        particleCount: 140,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      showToast('Successfully logged in with GitHub! 🐙', 'success');
+      dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+    } catch (err: any) {
+      console.error(err);
+      showToast(`GitHub Auth error: ${err.message}`, 'error');
+    }
   };
 
   return (
@@ -435,7 +462,7 @@ export default function LoginPage() {
               
               {/* Google Sticker */}
               <button 
-                onClick={handleEnterWorkspace}
+                onClick={handleGoogleLogin}
                 className="mood-sticker"
                 style={{ 
                   flex: 1, 
@@ -452,7 +479,7 @@ export default function LoginPage() {
 
               {/* GitHub Sticker */}
               <button 
-                onClick={handleEnterWorkspace}
+                onClick={handleGithubLogin}
                 className="mood-sticker"
                 style={{ 
                   flex: 1, 
