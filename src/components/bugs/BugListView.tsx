@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBugs } from '../../context/BugContext';
 import type { Bug, BugStatus, BugSeverity, BugPriority } from '../../types';
 import {
@@ -7,7 +7,7 @@ import {
 } from '../common/Badge';
 import {
   ChevronUp, ChevronDown, ArrowUpDown, Filter,
-  X, AlertTriangle, RefreshCw, Users
+  X, AlertTriangle, Users
 } from 'lucide-react';
 import BugDetailPanel from './BugDetailView';
 
@@ -16,6 +16,54 @@ const SEVERITIES: BugSeverity[] = ['BLOCKER', 'CRITICAL', 'MAJOR', 'NORMAL', 'MI
 const PRIORITIES: BugPriority[] = ['P1', 'P2', 'P3', 'P4', 'P5'];
 
 type SortKey = 'id' | 'severity' | 'priority' | 'status' | 'updatedAt' | 'createdAt';
+
+// Playful Mascot doodle for the empty state
+const PlayfulEmptyState = ({ onClear }: { onClear: () => void }) => (
+  <div className="playful-empty-state">
+    <div className="empty-state-mascot">
+      <svg 
+        viewBox="0 0 100 100" 
+        width="80" 
+        height="80" 
+        fill="none" 
+        stroke="var(--accent-yellow)" 
+        strokeWidth="6" 
+        strokeLinecap="round"
+      >
+        <path d="M 35 25 Q 25 10 15 15" />
+        <path d="M 65 25 Q 75 10 85 15" />
+        <circle cx="15" cy="15" r="4" fill="currentColor" />
+        <circle cx="85" cy="15" r="4" fill="currentColor" />
+        <path d="M 25 45 C 20 25, 80 25, 75 45 C 80 70, 70 85, 50 85 C 30 85, 20 70, 25 45 Z" fill="var(--bg-surface)" stroke="currentColor" />
+        <circle cx="40" cy="42" r="5" fill="currentColor" />
+        <circle cx="60" cy="42" r="5" fill="currentColor" />
+        <circle cx="34" cy="50" r="3" fill="var(--accent-coral)" stroke="none" />
+        <circle cx="66" cy="50" r="3" fill="var(--accent-coral)" stroke="none" />
+        <path d="M 40 60 Q 50 50 60 60" stroke="currentColor" strokeWidth="5" fill="none" />
+        <path d="M 18 45 L 8 42" />
+        <path d="M 82 45 L 92 42" />
+        <path d="M 15 60 L 5 62" />
+        <path d="M 85 60 L 95 62" />
+      </svg>
+    </div>
+    
+    <div style={{ 
+      fontFamily: 'var(--font-hand)', 
+      fontSize: '1.8rem', 
+      color: 'var(--accent-yellow)', 
+      marginTop: '16px',
+      fontWeight: 'bold'
+    }}>
+      No sketchnotes found!
+    </div>
+    <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '8px 0 20px', maxWidth: '320px' }}>
+      Either your query returned nothing or the bugs have crawled away to hide!
+    </div>
+    <button className="btn btn-primary" onClick={onClear}>
+      Reset BugStudio Filters
+    </button>
+  </div>
+);
 
 export default function BugListView() {
   const {
@@ -94,16 +142,18 @@ export default function BugListView() {
   return (
     <div className="list-view">
       <div className="list-view-header">
-        <span className="view-title">Issue Tracker</span>
-        <span className="view-count">{sortedBugs.length} issues</span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="list-view-header-title">
+          <span className="view-title">BugStudio Sketchbook</span>
+          <span className="view-count">{sortedBugs.length} notes</span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {hasActiveFilters && (
-            <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ color: 'var(--color-warn)', fontSize: '0.78rem' }}>
-              <X size={13} /> Clear Filters
+            <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ color: 'var(--accent-coral)', fontSize: '0.78rem' }}>
+              <X size={13} /> Wipe Filters
             </button>
           )}
           <button className={`btn btn-secondary btn-sm ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(f => !f)}>
-            <Filter size={13} /> Filters
+            <Filter size={13} /> filter clip
           </button>
         </div>
       </div>
@@ -111,7 +161,7 @@ export default function BugListView() {
       {/* Filter strip */}
       {showFilters && (
         <div className="filter-strip">
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>STATUS:</span>
+          <span style={{ color: 'var(--accent-yellow)', fontWeight: 800, fontFamily: 'var(--font-hand)', fontSize: '1.1rem' }}>Marks:</span>
           {STATUS_ORDER.map(s => (
             <button
               key={s}
@@ -121,8 +171,8 @@ export default function BugListView() {
               {s.replace('_', ' ')}
             </button>
           ))}
-          <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>SEVERITY:</span>
+          <div style={{ width: 1, height: 16, background: '#2D2B3D' }} />
+          <span style={{ color: 'var(--accent-yellow)', fontWeight: 800, fontFamily: 'var(--font-hand)', fontSize: '1.1rem' }}>Severity:</span>
           {SEVERITIES.map(s => (
             <button
               key={s}
@@ -132,7 +182,7 @@ export default function BugListView() {
               {s}
             </button>
           ))}
-          <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
+          <div style={{ width: 1, height: 16, background: '#2D2B3D' }} />
           {PRIORITIES.map(p => (
             <button
               key={p}
@@ -146,64 +196,46 @@ export default function BugListView() {
       )}
 
       {/* Keyboard shortcuts hint */}
-      <div style={{ padding: '0 24px 8px', display: 'flex', gap: 12, alignItems: 'center' }}>
-        <span style={{ fontSize: '0.68rem', color: 'var(--text-disabled)' }}>
-          <span className="kbd">j</span>/<span className="kbd">k</span> navigate &nbsp;
-          <span className="kbd">ESC</span> close &nbsp;
-          <span className="kbd">⌘K</span> commands
-        </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            Use keys <span className="kbd">j</span> / <span className="kbd">k</span> to flip notes &nbsp;·&nbsp;
+            <span className="kbd">ESC</span> close detail &nbsp;·&nbsp;
+            <span className="kbd">⌘K</span> command panel
+          </span>
+        </div>
+        
+        {/* Sort triggers */}
+        <div style={{ display: 'flex', gap: 10, fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <span>Sort notebooks by:</span>
+          <span style={{ cursor: 'pointer', color: sortKey === 'updatedAt' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('updatedAt')}>
+            Updated <SortIcon k="updatedAt" />
+          </span>
+          <span style={{ cursor: 'pointer', color: sortKey === 'severity' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('severity')}>
+            Severity <SortIcon k="severity" />
+          </span>
+          <span style={{ cursor: 'pointer', color: sortKey === 'priority' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('priority')}>
+            Priority <SortIcon k="priority" />
+          </span>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="bug-table-wrapper">
+      {/* Sticky Note Cards Grid */}
+      <div className="bug-table-wrapper" style={{ padding: 0 }}>
         {sortedBugs.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon"><Filter size={24} /></div>
-            <div className="empty-state-title">No issues match</div>
-            <div className="empty-state-desc">Try adjusting your search query or clearing the active filters.</div>
-            {hasActiveFilters && (
-              <button className="btn btn-secondary" style={{ marginTop: 8 }} onClick={clearFilters}>
-                Clear All Filters
-              </button>
-            )}
-          </div>
+          <PlayfulEmptyState onClear={clearFilters} />
         ) : (
-          <table className="bug-table">
-            <thead>
-              <tr>
-                <th onClick={() => toggleSort('id')} style={{ width: 80 }}>
-                  ID <SortIcon k="id" />
-                </th>
-                <th style={{ minWidth: 340 }}>Title / Description</th>
-                <th onClick={() => toggleSort('severity')} style={{ width: 120 }}>
-                  Severity <SortIcon k="severity" />
-                </th>
-                <th onClick={() => toggleSort('priority')} style={{ width: 80 }}>
-                  Pri <SortIcon k="priority" />
-                </th>
-                <th onClick={() => toggleSort('status')} style={{ width: 130 }}>
-                  Status <SortIcon k="status" />
-                </th>
-                <th style={{ width: 130 }}>Assignee</th>
-                <th style={{ width: 110 }}>Product</th>
-                <th style={{ width: 100 }}>Flags</th>
-                <th onClick={() => toggleSort('updatedAt')} style={{ width: 80 }}>
-                  Updated <SortIcon k="updatedAt" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedBugs.map(bug => (
-                <BugRow
-                  key={bug.id}
-                  bug={bug}
-                  selected={selectedBugId === bug.id}
-                  onClick={() => dispatch({ type: 'SELECT_BUG', payload: selectedBugId === bug.id ? null : bug.id })}
-                  formatTime={formatTime}
-                />
-              ))}
-            </tbody>
-          </table>
+          <div className="bug-cards-grid">
+            {sortedBugs.map(bug => (
+              <BugCard
+                key={bug.id}
+                bug={bug}
+                selected={selectedBugId === bug.id}
+                onClick={() => dispatch({ type: 'SELECT_BUG', payload: selectedBugId === bug.id ? null : bug.id })}
+                formatTime={formatTime}
+              />
+            ))}
+          </div>
         )}
       </div>
 
@@ -217,58 +249,73 @@ export default function BugListView() {
   );
 }
 
-function BugRow({
+function BugCard({
   bug, selected, onClick, formatTime
 }: {
   bug: Bug; selected: boolean; onClick: () => void; formatTime: (d: string) => string;
 }) {
   const importantFlags = bug.flags.filter(f => f.status === '?' || f.status === '-');
+  
+  // Deterministic slight angle rotation based on bug ID to look hand-placed
+  const angle = ((bug.numId * 19) % 7) - 3; // -3deg to +3deg
+  const colorIndex = bug.numId % 4; // 4 color types
 
   return (
-    <tr
-      className={`bug-row ${selected ? 'selected' : ''}`}
+    <div
+      className={`bug-card-notebook bug-card-color-${colorIndex} ${selected ? 'selected' : ''}`}
       onClick={onClick}
+      style={{ transform: `rotate(${angle}deg)` }}
     >
-      <td className="bug-id-cell">{bug.id}</td>
-      <td>
-        <div className="bug-title-cell">
+      {/* masking tape strip decoration */}
+      <div className="tape-strip"></div>
+      
+      <div className="bug-card-header">
+        <span className="bug-card-id">
           {bug.security.isEmbargoed && <EmbargoIndicator />}
-          {bug.title}
+          {bug.id}
+        </span>
+        <div style={{ transform: 'rotate(2deg)' }}>
+          <PriorityBadge priority={bug.priority} />
         </div>
-        <div style={{ display: 'flex', gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
-          <DependencyIndicator blocksCount={bug.blocks.length} dependsCount={bug.dependsOn.length} />
-          {bug.tags.slice(0, 3).map(t => <TagChip key={t} label={t} />)}
-        </div>
-      </td>
-      <td><SeverityBadge severity={bug.severity} /></td>
-      <td><PriorityBadge priority={bug.priority} /></td>
-      <td><StatusBadge status={bug.status} /></td>
-      <td>
-        <div className="assignee-cell">
+      </div>
+      
+      <div className="bug-card-title">
+        {bug.title}
+      </div>
+      
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', margin: '4px 0 12px' }}>
+        <DependencyIndicator blocksCount={bug.blocks.length} dependsCount={bug.dependsOn.length} />
+        {bug.tags.slice(0, 2).map(t => <TagChip key={t} label={t} />)}
+      </div>
+      
+      <div className="bug-card-footer">
+        <SeverityBadge severity={bug.severity} />
+        
+        <div className="bug-card-meta">
           <img
-            className="assignee-avatar"
+            style={{ width: 22, height: 22, borderRadius: '50%', border: '1.5px solid var(--text-dark)' }}
             src={`https://images.unsplash.com/photo-15${bug.numId % 9}0489944761-15a19d654956?w=64&fit=crop&q=80`}
             alt={bug.assignee}
             onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
-          <span className="assignee-name">{bug.assignee.split(' ')[0]}</span>
+          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dark)' }}>
+            {bug.assignee.split(' ')[0]}
+          </span>
         </div>
-      </td>
-      <td>
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-          {bug.product.split(' ').slice(0, 2).join(' ')}
-        </span>
-      </td>
-      <td>
-        <div className="flags-cell">
-          {importantFlags.slice(0, 3).map(f => <FlagBadge key={f.id} flag={f} />)}
-        </div>
-      </td>
-      <td>
-        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
-          {formatTime(bug.updatedAt)}
-        </span>
-      </td>
-    </tr>
+      </div>
+      
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginTop: '6px',
+        fontSize: '0.65rem',
+        color: 'rgba(31, 30, 37, 0.6)',
+        fontFamily: 'var(--font-mono)'
+      }}>
+        <span>{bug.product.split(' ')[0]}</span>
+        <span>{formatTime(bug.updatedAt)}</span>
+      </div>
+    </div>
   );
 }

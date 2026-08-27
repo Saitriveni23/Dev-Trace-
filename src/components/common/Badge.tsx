@@ -1,66 +1,113 @@
 import React from 'react';
 import type { Bug, BugFlag } from '../../types';
-import { Lock, Link2, ChevronUp } from 'lucide-react';
+import { Lock, Link2 } from 'lucide-react';
 
 /* =============================================
-   Severity Badge
+   Severity Badge - Redesigned as an Ink Stamp
    ============================================= */
 export function SeverityBadge({ severity }: { severity: Bug['severity'] }) {
   const icons: Record<string, string> = {
-    BLOCKER: '⛔', CRITICAL: '🔴', MAJOR: '🟠', NORMAL: '🔵',
-    MINOR: '🟢', TRIVIAL: '⚪', ENHANCEMENT: '💜'
+    BLOCKER: '💥', CRITICAL: '🚨', MAJOR: '🔥', NORMAL: '✏️',
+    MINOR: '🍃', TRIVIAL: '🥚', ENHANCEMENT: '✨'
   };
   return (
-    <span className={`badge badge-severity-${severity}`}>
-      {icons[severity]} {severity}
+    <span className={`badge badge-stamp badge-severity-${severity}`} style={{ fontSize: '0.72rem', display: 'inline-flex', gap: '4px', alignItems: 'center' }}>
+      <span>{icons[severity]}</span>
+      <span>{severity}</span>
     </span>
   );
 }
 
 /* =============================================
-   Status Badge
+   Status Badge - Redesigned as handwritten label
    ============================================= */
 export function StatusBadge({ status }: { status: Bug['status'] }) {
   const labels: Record<string, string> = {
-    UNCONFIRMED: '? UNCONFIRMED', CONFIRMED: '✓ CONFIRMED',
-    IN_PROGRESS: '⟳ IN PROGRESS', RESOLVED: '✔ RESOLVED',
-    VERIFIED: '✔✔ VERIFIED', CLOSED: '✕ CLOSED'
+    UNCONFIRMED: 'unconfirmed?', CONFIRMED: 'confirmed ✓',
+    IN_PROGRESS: 'working ✎', RESOLVED: 'resolved ✔',
+    VERIFIED: 'verified ★', CLOSED: 'closed ✕'
   };
   return (
-    <span className={`badge badge-status-${status}`}>
+    <span className={`badge badge-status badge-status-${status}`}>
       {labels[status] ?? status}
     </span>
   );
 }
 
 /* =============================================
-   Priority Badge
+   Priority Badge - Circled marker look
    ============================================= */
 export function PriorityBadge({ priority }: { priority: Bug['priority'] }) {
+  const bgColors: Record<string, string> = {
+    P1: 'var(--accent-coral)',
+    P2: 'var(--accent-coral)',
+    P3: 'var(--accent-yellow)',
+    P4: 'var(--accent-mint)',
+    P5: 'var(--accent-mint)',
+  };
+  const color = bgColors[priority] || 'var(--accent-yellow)';
+  
   return (
-    <span className={`badge badge-prio-${priority}`}>
-      {priority === 'P1' ? '↑↑ ' : priority === 'P2' ? '↑ ' : priority === 'P5' ? '↓ ' : ''}
+    <span 
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        border: '2px solid var(--text-dark)',
+        background: color,
+        color: 'var(--text-dark)',
+        fontWeight: 800,
+        fontSize: '0.75rem',
+        boxShadow: '1px 1px 0px rgba(0,0,0,0.8)',
+        fontFamily: 'var(--font-mono)'
+      }}
+      title={`Priority ${priority}`}
+    >
       {priority}
     </span>
   );
 }
 
 /* =============================================
-   Flag Badge
+   Flag Badge - Bookmark style
    ============================================= */
 export function FlagBadge({ flag }: { flag: BugFlag }) {
-  const cls: Record<string, string> = {
-    review: 'flag-badge-review',
-    needinfo: 'flag-badge-needinfo',
-    'sec-audit': 'flag-badge-sec',
-    'qa-verify': 'flag-badge-qa',
-    'rel-blocker': 'flag-badge-rel'
+  const bgColors: Record<string, string> = {
+    review: 'var(--accent-yellow)',
+    needinfo: 'var(--accent-purple)',
+    'sec-audit': 'var(--accent-coral)',
+    'qa-verify': 'var(--accent-mint)',
+    'rel-blocker': 'var(--accent-coral)'
   };
-  const color = cls[flag.type] ?? 'flag-badge-review';
+  const color = bgColors[flag.type] ?? 'var(--accent-yellow)';
   const statusIcon = { '?': '?', '+': '+', '-': '−', 'X': '✕' }[flag.status];
+  
   return (
-    <span className={`flag-badge ${color}`} title={flag.note}>
-      {flag.type}{statusIcon}
+    <span 
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        padding: '2px 8px',
+        background: color,
+        color: 'var(--text-dark)',
+        border: '1.5px solid var(--text-dark)',
+        borderRadius: '3px',
+        fontSize: '0.68rem',
+        fontWeight: 800,
+        fontFamily: 'var(--font-mono)',
+        boxShadow: '1.5px 1.5px 0px rgba(0, 0, 0, 0.9)',
+        transform: 'rotate(-1deg)'
+      }}
+      title={flag.note}
+    >
+      <span>{flag.type}</span>
+      <span style={{ borderLeft: '1px solid var(--text-dark)', paddingLeft: '4px', fontWeight: 900 }}>
+        {statusIcon}
+      </span>
     </span>
   );
 }
@@ -70,8 +117,17 @@ export function FlagBadge({ flag }: { flag: BugFlag }) {
    ============================================= */
 export function EmbargoIndicator() {
   return (
-    <span title="Security Embargoed" className="security-indicator">
-      <Lock size={12} />
+    <span 
+      title="Security Embargoed" 
+      style={{ 
+        color: 'var(--accent-coral)', 
+        marginRight: 6, 
+        display: 'inline-flex',
+        alignItems: 'center',
+        verticalAlign: 'middle'
+      }}
+    >
+      <Lock size={12} strokeWidth={2.5} />
     </span>
   );
 }
@@ -82,10 +138,23 @@ export function EmbargoIndicator() {
 export function DependencyIndicator({ blocksCount, dependsCount }: { blocksCount: number; dependsCount: number }) {
   if (blocksCount === 0 && dependsCount === 0) return null;
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: 'var(--color-warn)', fontSize: '0.7rem', fontWeight: 700 }}
+    <span 
+      style={{ 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        gap: 3, 
+        color: 'var(--text-dark)', 
+        fontSize: '0.7rem', 
+        fontWeight: 800,
+        background: 'rgba(255, 255, 255, 0.6)',
+        padding: '1px 5px',
+        border: '1px solid rgba(0,0,0,0.15)',
+        borderRadius: '3px',
+        transform: 'rotate(-1deg)'
+      }}
       title={`Blocks ${blocksCount}, Depends on ${dependsCount}`}
     >
-      <Link2 size={11} />
+      <Link2 size={11} strokeWidth={2.5} />
       {blocksCount > 0 && `↑${blocksCount}`}
       {dependsCount > 0 && `↓${dependsCount}`}
     </span>
@@ -93,7 +162,7 @@ export function DependencyIndicator({ blocksCount, dependsCount }: { blocksCount
 }
 
 /* =============================================
-   Tag chip
+   Tag chip - Masking Tape look
    ============================================= */
 export function TagChip({ label }: { label: string }) {
   return <span className="tag">#{label}</span>;
@@ -103,16 +172,33 @@ export function TagChip({ label }: { label: string }) {
    CVSS Score Chip
    ============================================= */
 export function CvssChip({ score }: { score: number }) {
-  const color = score >= 9 ? 'var(--sev-blocker)' :
-    score >= 7 ? 'var(--sev-critical)' :
-    score >= 4 ? 'var(--sev-major)' : 'var(--sev-minor)';
+  const color = score >= 9 ? 'var(--accent-coral)' :
+    score >= 7 ? 'var(--accent-coral)' :
+    score >= 4 ? 'var(--accent-yellow)' : 'var(--accent-mint)';
   const label = score >= 9 ? 'CRITICAL' : score >= 7 ? 'HIGH' : score >= 4 ? 'MEDIUM' : 'LOW';
   return (
     <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5, padding: '2px 8px',
-      background: `${color}22`, border: `1px solid ${color}44`,
-      borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800, color
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 5,
+      padding: '3px 10px',
+      background: 'white',
+      border: '2px solid var(--text-dark)',
+      borderRadius: '4px',
+      fontSize: '0.72rem',
+      fontWeight: 800,
+      color: 'var(--text-dark)',
+      boxShadow: '2px 2px 0px rgba(0,0,0,0.9)',
+      transform: 'rotate(-1deg)'
     }}>
+      <span style={{ 
+        width: 8, 
+        height: 8, 
+        borderRadius: '50%', 
+        background: color, 
+        border: '1px solid var(--text-dark)',
+        display: 'inline-block' 
+      }}></span>
       CVSS {score.toFixed(1)} · {label}
     </span>
   );
@@ -124,24 +210,25 @@ export function CvssChip({ score }: { score: number }) {
 export function ResolutionBadge({ resolution }: { resolution: Bug['resolution'] }) {
   if (!resolution) return null;
   const colors: Record<string, string> = {
-    FIXED: 'var(--color-success)', INVALID: 'var(--text-muted)',
-    WONTFIX: 'var(--text-muted)', DUPLICATE: 'var(--color-info)',
-    WORKSFORME: 'var(--color-warn)', NOT_A_BUG: 'var(--text-muted)',
-    MOVED: 'var(--color-accent)'
+    FIXED: 'var(--accent-mint)', INVALID: 'var(--text-muted)',
+    WONTFIX: 'var(--text-muted)', DUPLICATE: 'var(--accent-purple)',
+    WORKSFORME: 'var(--accent-yellow)', NOT_A_BUG: 'var(--text-muted)',
+    MOVED: 'var(--accent-purple)'
   };
-  const bg: Record<string, string> = {
-    FIXED: 'var(--color-success-muted)', INVALID: 'var(--bg-overlay)',
-    WONTFIX: 'var(--bg-overlay)', DUPLICATE: 'var(--color-info-muted)',
-    WORKSFORME: 'var(--color-warn-muted)', NOT_A_BUG: 'var(--bg-overlay)',
-    MOVED: 'var(--color-accent-muted)'
-  };
+  
   return (
     <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px',
-      background: bg[resolution] ?? 'var(--bg-overlay)',
-      border: `1px solid ${colors[resolution] ?? 'var(--border)'}44`,
-      borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800,
-      color: colors[resolution] ?? 'var(--text-muted)'
+      display: 'inline-flex',
+      alignItems: 'center',
+      padding: '3px 10px',
+      background: colors[resolution] || 'var(--accent-yellow)',
+      border: '2px solid var(--text-dark)',
+      borderRadius: '4px',
+      fontSize: '0.72rem',
+      fontWeight: 800,
+      color: 'var(--text-dark)',
+      boxShadow: '2.5px 2.5px 0px rgba(0,0,0,0.9)',
+      transform: 'rotate(1.5deg)'
     }}>
       {resolution}
     </span>

@@ -9,7 +9,7 @@ interface BugState {
   currentUser: UserProfile;
   users: UserProfile[];
   selectedBugId: string | null;
-  activeView: 'list' | 'kanban' | 'analytics' | 'security' | 'graph' | 'search';
+  activeView: 'landing' | 'login' | 'list' | 'kanban' | 'dashboard' | 'analytics' | 'security' | 'graph' | 'search' | 'assistant' | 'sprint' | 'mobile';
   searchQuery: string;
   filterProduct: string | null;
   filterStatus: BugStatus | null;
@@ -130,7 +130,7 @@ const initialState: BugState = {
   currentUser: CURRENT_USER,
   users: USERS,
   selectedBugId: null,
-  activeView: 'list',
+  activeView: 'landing',
   searchQuery: '',
   filterProduct: null,
   filterStatus: null,
