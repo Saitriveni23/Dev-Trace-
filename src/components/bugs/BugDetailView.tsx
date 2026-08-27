@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useBugs } from '../../context/BugContext';
 import type { Bug, BugStatus, BugResolution } from '../../types';
 import { SeverityBadge, PriorityBadge } from '../common/Badge';
-import { X, Sparkles, Send, CheckSquare, Square, Paperclip } from 'lucide-react';
+import { X, Sparkles, Send, CheckSquare, Square, Paperclip, Printer, Image } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -30,6 +30,23 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
     { id: 2, text: 'Trigger rapid double loader clicks.', done: false },
     { id: 3, text: ' Sanity check client handshake index pools.', done: false },
   ]);
+
+  const [screenshots, setScreenshots] = useState<string[]>([
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=60",
+    "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=200&auto=format&fit=crop&q=60"
+  ]);
+
+  const handleScreenshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setScreenshots(prev => [...prev, reader.result as string]);
+      confetti({ particleCount: 30, spread: 20 });
+      showToast('Polaroid evidence snapshot attached to case dossier! 📸', 'success');
+    };
+    reader.readAsDataURL(file);
+  };
 
   if (!bug) return null;
 
@@ -148,13 +165,23 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
           <span style={{ fontFamily: 'var(--font-marker)', fontSize: '1.25rem' }}>
             CASE #{bug.id}: {bug.title}
           </span>
-          <button 
-            className="modal-close-doodle" 
-            onClick={onClose}
-            style={{ background: 'var(--text-dark)', color: 'white', border: '2px solid white', borderRadius: '50%', padding: '4px' }}
-          >
-            <X size={15} strokeWidth={3} />
-          </button>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button 
+              className="navbar-icon-btn print-doodle-btn" 
+              onClick={() => window.print()}
+              style={{ background: 'var(--text-dark)', color: 'white', border: '2px solid white', borderRadius: '50%', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Print Case Dossier"
+            >
+              <Printer size={13} strokeWidth={2.5} />
+            </button>
+            <button 
+              className="modal-close-doodle" 
+              onClick={onClose}
+              style={{ background: 'var(--text-dark)', color: 'white', border: '2px solid white', borderRadius: '50%', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <X size={13} strokeWidth={3} />
+            </button>
+          </div>
         </div>
 
         {/* Dossier contents split layout */}
@@ -229,26 +256,59 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
               </span>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                {/* Polaroid 1 */}
-                <div style={{ background: 'var(--paper-beige)', border: '1.5px solid var(--text-dark)', padding: '6px 6px 16px', boxShadow: '2px 2px 0px rgba(0,0,0,0.85)', transform: 'rotate(-2deg)', position: 'relative' }}>
-                  <div className="tape-strip-side" style={{ transform: 'rotate(45deg)', top: '-6px', right: '-6px', width: '24px', height: '8px' }}></div>
-                  <img 
-                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=60" 
-                    alt="screenshot 1" 
-                    style={{ width: '100%', height: '90px', objectFit: 'cover', border: '1px solid var(--text-dark)' }} 
-                  />
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textAlign: 'center', marginTop: '6px', fontWeight: 900, color: 'var(--text-dark)' }}>EVIDENCE_A.PNG</div>
-                </div>
+                {screenshots.map((src, idx) => {
+                  const angle = (idx % 2 === 0) ? -2 : 2;
+                  return (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        background: 'var(--paper-beige)', 
+                        border: '1.5px solid var(--text-dark)', 
+                        padding: '6px 6px 16px', 
+                        boxShadow: '2px 2px 0px rgba(0,0,0,0.85)', 
+                        transform: `rotate(${angle}deg)`, 
+                        position: 'relative' 
+                      }}
+                    >
+                      <div className="tape-strip-side" style={{ transform: `rotate(${angle * 22.5}deg)`, top: '-6px', right: '-6px', width: '24px', height: '8px' }}></div>
+                      <img 
+                        src={src} 
+                        alt={`screenshot-${idx}`} 
+                        style={{ width: '100%', height: '90px', objectFit: 'cover', border: '1px solid var(--text-dark)' }} 
+                      />
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textAlign: 'center', marginTop: '6px', fontWeight: 900, color: 'var(--text-dark)' }}>EVIDENCE_{idx + 1}.PNG</div>
+                    </div>
+                  );
+                })}
 
-                {/* Polaroid 2 */}
-                <div style={{ background: 'var(--paper-beige)', border: '1.5px solid var(--text-dark)', padding: '6px 6px 16px', boxShadow: '2px 2px 0px rgba(0,0,0,0.85)', transform: 'rotate(2deg)', position: 'relative' }}>
-                  <div className="tape-strip-side" style={{ transform: 'rotate(-45deg)', top: '-6px', left: '-6px', width: '24px', height: '8px' }}></div>
-                  <img 
-                    src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=200&auto=format&fit=crop&q=60" 
-                    alt="screenshot 2" 
-                    style={{ width: '100%', height: '90px', objectFit: 'cover', border: '1px solid var(--text-dark)' }} 
+                {/* Upload attachment Polaroids card */}
+                <div 
+                  onClick={() => document.getElementById('screenshot-file-picker')?.click()}
+                  style={{
+                    background: 'rgba(0,0,0,0.02)',
+                    border: '2px dashed rgba(0,0,0,0.15)',
+                    borderRadius: '4px',
+                    padding: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    minHeight: '125px',
+                    textAlign: 'center'
+                  }}
+                >
+                  <input 
+                    type="file" 
+                    id="screenshot-file-picker" 
+                    accept="image/*" 
+                    style={{ display: 'none' }} 
+                    onChange={handleScreenshotUpload}
                   />
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textAlign: 'center', marginTop: '6px', fontWeight: 900, color: 'var(--text-dark)' }}>METRICS_LOG.PNG</div>
+                  <Image size={18} style={{ color: 'rgba(0,0,0,0.4)', marginBottom: '4px' }} />
+                  <span style={{ fontSize: '0.68rem', fontWeight: 'bold', color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase' }}>
+                    Pin Evidence File
+                  </span>
                 </div>
               </div>
             </div>
@@ -442,6 +502,38 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
           </div>
 
         </div>
+
+        {/* Media Print styles */}
+        <style>{`
+          @media print {
+            body * {
+              visibility: hidden;
+            }
+            .detail-panel-overlay {
+              background: transparent !important;
+              position: static !important;
+              padding: 0 !important;
+            }
+            .detail-panel, .detail-panel * {
+              visibility: visible;
+            }
+            .detail-panel {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100% !important;
+              max-width: 100% !important;
+              box-shadow: none !important;
+              border: 3.5px solid black !important;
+              background: white !important;
+              color: black !important;
+              padding: 0 !important;
+            }
+            .modal-close-doodle, .print-doodle-btn, form, input, button {
+              display: none !important;
+            }
+          }
+        `}</style>
 
       </div>
     </div>

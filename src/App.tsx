@@ -17,6 +17,8 @@ import AdvancedSearch from './components/search/AdvancedSearch';
 import LandingPage from './components/layout/LandingPage';
 import LoginPage from './components/layout/LoginPage';
 import ToastContainer from './components/common/Toast';
+import SketchBoardView from './components/analytics/SketchBoardView';
+import GithubSyncView from './components/github/GithubSyncView';
 import './index.css';
 
 function AppInner() {
@@ -78,6 +80,8 @@ function AppInner() {
       case 'analytics': return <BugAnalyticsView />;
       case 'assistant': return <AIAssistantView />;
       case 'sprint':    return <SprintPlannerView />;
+      case 'sketch':    return <SketchBoardView />;
+      case 'github':    return <GithubSyncView />;
       case 'mobile':    return <BugMobileView />;
       case 'security':  return <SecurityPortal />;
       case 'graph':     return <DependencyGraph />;

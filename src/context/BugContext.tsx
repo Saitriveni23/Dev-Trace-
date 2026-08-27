@@ -9,7 +9,7 @@ interface BugState {
   currentUser: UserProfile;
   users: UserProfile[];
   selectedBugId: string | null;
-  activeView: 'landing' | 'login' | 'list' | 'kanban' | 'dashboard' | 'analytics' | 'security' | 'graph' | 'search' | 'assistant' | 'sprint' | 'mobile';
+  activeView: 'landing' | 'login' | 'list' | 'kanban' | 'dashboard' | 'analytics' | 'security' | 'graph' | 'search' | 'assistant' | 'sprint' | 'mobile' | 'sketch' | 'github';
   searchQuery: string;
   filterProduct: string | null;
   filterStatus: BugStatus | null;

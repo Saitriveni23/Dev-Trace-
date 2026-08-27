@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useBugs } from '../../context/BugContext';
 import { 
   BarChart2, TrendingDown, Clock, ShieldAlert, Zap, Coffee, 
-  Sparkles, Smile, Bug, CheckSquare, Square, Search, Bell, Sun, Moon 
+  Sparkles, Smile, Bug, CheckSquare, Square, Search, Bell, Sun, Moon,
+  Volume2, VolumeX, CloudRain, Keyboard
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -14,8 +15,180 @@ const MUSEUM_BUGS = [
   { id: 'BM-04', name: 'The CSS Float Leak', desc: 'Div floated so far left it appears on adjacent developer screen.', stamp: 'ESCAPE' },
 ];
 
+// Offline Synthesized Ambient audio controller using Web Audio API
+class AmbientSynth {
+  private ctx: AudioContext | null = null;
+  private lofiTimer: any = null;
+  private typingTimer: any = null;
+  private rainSource: AudioBufferSourceNode | null = null;
+  private rainGain: GainNode | null = null;
+
+  public init() {
+    if (!this.ctx) {
+      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  // Rain sound generator (Low passed white noise)
+  public startRain() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.rainSource) return;
+
+    const bufferSize = 3 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    this.rainSource = this.ctx.createBufferSource();
+    this.rainSource.buffer = noiseBuffer;
+    this.rainSource.loop = true;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(650, this.ctx.currentTime);
+
+    this.rainGain = this.ctx.createGain();
+    this.rainGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+
+    this.rainSource.connect(filter);
+    filter.connect(this.rainGain);
+    this.rainGain.connect(this.ctx.destination);
+    
+    this.rainSource.start();
+  }
+
+  public stopRain() {
+    if (this.rainSource) {
+      try {
+        this.rainSource.stop();
+      } catch (e) {}
+      this.rainSource.disconnect();
+      this.rainSource = null;
+    }
+  }
+
+  // Lo-Fi repeating beat loop
+  public startLofi() {
+    this.init();
+    if (!this.ctx) return;
+
+    let step = 0;
+    const playBeat = () => {
+      if (!this.ctx) return;
+
+      // Low bass A note
+      if (step % 2 === 0) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(60, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.35);
+      }
+
+      // Soft high hats noise burst
+      if (step % 2 === 1) {
+        const noiseBuffer = this.ctx.createBuffer(1, 0.08 * this.ctx.sampleRate, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < noiseBuffer.length; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const noiseSource = this.ctx.createBufferSource();
+        noiseSource.buffer = noiseBuffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(8000, this.ctx.currentTime);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+
+        noiseSource.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        noiseSource.start();
+      }
+
+      step = (step + 1) % 4;
+      this.lofiTimer = setTimeout(playBeat, 700); // Relaxed lofi pace
+    };
+
+    playBeat();
+  }
+
+  public stopLofi() {
+    if (this.lofiTimer) {
+      clearTimeout(this.lofiTimer);
+      this.lofiTimer = null;
+    }
+  }
+
+  // Keyboard clicks loop
+  public startTyping() {
+    this.init();
+    if (!this.ctx) return;
+
+    const playClick = () => {
+      if (!this.ctx) return;
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(200 + Math.random() * 150, this.ctx.currentTime);
+      
+      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.025);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.03);
+
+      this.typingTimer = setTimeout(playClick, 150 + Math.random() * 250);
+    };
+
+    playClick();
+  }
+
+  public stopTyping() {
+    if (this.typingTimer) {
+      clearTimeout(this.typingTimer);
+      this.typingTimer = null;
+    }
+  }
+
+  // Cleanup all audio contexts
+  public destroy() {
+    this.stopRain();
+    this.stopLofi();
+    this.stopTyping();
+    if (this.ctx) {
+      this.ctx.close();
+      this.ctx = null;
+    }
+  }
+}
+
 export default function MetricsDashboard() {
-  const { bugs, getMetrics, dispatch, showToast } = useBugs();
+  const { bugs, getMetrics, showToast } = useBugs();
   const metrics = getMetrics();
 
   // State hooks for interactive widgets
@@ -23,6 +196,63 @@ export default function MetricsDashboard() {
   const [devMood, setDevMood] = useState('Energetic ⚡');
   const [toggleDark, setToggleDark] = useState(true);
   const [museumIndex, setMuseumIndex] = useState(0);
+
+  // Ambient sound state toggles
+  const [isLofi, setIsLofi] = useState(false);
+  const [isRain, setIsRain] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const synthRef = useRef<AmbientSynth | null>(null);
+
+  useEffect(() => {
+    synthRef.current = new AmbientSynth();
+    return () => {
+      if (synthRef.current) {
+        synthRef.current.destroy();
+      }
+    };
+  }, []);
+
+  const toggleLofi = () => {
+    if (!synthRef.current) return;
+    synthRef.current.init();
+    if (isLofi) {
+      synthRef.current.stopLofi();
+      setIsLofi(false);
+      showToast('Lofi beats paused', 'info');
+    } else {
+      synthRef.current.startLofi();
+      setIsLofi(true);
+      showToast('Lofi beats streaming offline 🎵', 'success');
+    }
+  };
+
+  const toggleRain = () => {
+    if (!synthRef.current) return;
+    synthRef.current.init();
+    if (isRain) {
+      synthRef.current.stopRain();
+      setIsRain(false);
+      showToast('Rain sounds paused', 'info');
+    } else {
+      synthRef.current.startRain();
+      setIsRain(true);
+      showToast('Rainfall noise activated 🌧️', 'success');
+    }
+  };
+
+  const toggleTyping = () => {
+    if (!synthRef.current) return;
+    synthRef.current.init();
+    if (isTyping) {
+      synthRef.current.stopTyping();
+      setIsTyping(false);
+      showToast('Clicky typing simulator paused', 'info');
+    } else {
+      synthRef.current.startTyping();
+      setIsTyping(true);
+      showToast('Keyboard keypad click-clacks toggled ⌨️', 'success');
+    }
+  };
 
   // Today's priorities checkbox list
   const [priorities, setPriorities] = useState([
@@ -182,7 +412,6 @@ export default function MetricsDashboard() {
         <div style={{ background: '#17161F', border: '2.5px solid var(--text-dark)', borderRadius: '6px', padding: '16px', boxShadow: '4px 4px 0px rgba(0,0,0,0.95)' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-yellow)', marginBottom: '12px' }}>Burn down chart</div>
           <div style={{ height: '140px', borderBottom: '2px solid rgba(255,255,255,0.1)', borderLeft: '2px solid rgba(255,255,255,0.1)', position: 'relative' }}>
-            {/* Handdrawn SVG path line */}
             <svg viewBox="0 0 300 120" width="100%" height="100%" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M 10 10 L 80 40 L 150 55 L 220 85 L 290 115" stroke="var(--accent-coral)" strokeDasharray="3 3" />
               <path d="M 10 10 Q 90 20 150 70 T 290 110" stroke="var(--accent-mint)" strokeWidth="4" />
@@ -202,7 +431,6 @@ export default function MetricsDashboard() {
         {/* Sprint Donut & Recent Activity */}
         <div style={{ background: '#17161F', border: '2.5px solid var(--text-dark)', borderRadius: '6px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '14px', boxShadow: '4px 4px 0px rgba(0,0,0,0.95)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Mini Donut */}
             <div style={{ width: '32px', height: '32px', position: 'relative' }}>
               <svg viewBox="0 0 36 36" width="100%" height="100%">
                 <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
@@ -256,7 +484,7 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Developer Mood Board */}
-        <div style={{ background: '#17161F', border: '2.5px solid var(--text-dark)', borderRadius: '6px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px', boxShadow: '4px 4px 0px rgba(0,0,0,0.95)' }}>
+        <div style={{ background: '#17161F', border: '2.5px solid var(--text-dark)', borderRadius: '6px', padding: '16px', display: 'flex', flexWrap: 'wrap', flexDirection: 'column', gap: '10px', boxShadow: '4px 4px 0px rgba(0,0,0,0.95)' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-coral)' }}>mood stamp</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px' }}>
             {['Energetic ⚡', 'Coffee High ☕', 'Zzz Sleepy 💤'].map(mood => (
@@ -349,28 +577,94 @@ export default function MetricsDashboard() {
           </p>
         </div>
 
-        {/* Productivity Coffee Meter */}
+        {/* Productivity Coffee Meter + Caffeine Ambient Soundboard */}
         <div 
-          onClick={handleCoffeeClick}
           style={{ 
             background: '#17161F', 
             border: '2.5px solid var(--text-dark)', 
             borderRadius: '6px', 
-            padding: '16px', 
+            padding: '14px 16px', 
             boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            cursor: 'pointer'
+            flexDirection: 'column',
+            gap: '8px'
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-yellow)' }}>caffeine monitor</span>
-            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1rem', opacity: 0.7, marginTop: '2px' }}>{coffeeCups}/5 cups filled</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div onClick={handleCoffeeClick} style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-yellow)' }}>caffeine monitor</span>
+              <span style={{ fontFamily: 'var(--font-hand)', fontSize: '0.92rem', opacity: 0.7 }}>{coffeeCups}/5 cups (click to fill)</span>
+            </div>
+            <Coffee onClick={handleCoffeeClick} size={20} style={{ color: coffeeCups > 0 ? 'var(--accent-yellow)' : 'white', cursor: 'pointer' }} />
           </div>
-          {/* Coffee Mug Icon */}
-          <div style={{ position: 'relative' }}>
-            <Coffee size={24} style={{ color: coffeeCups > 0 ? 'var(--accent-yellow)' : 'white' }} />
+          
+          {/* Ambient Soundboard Toggles */}
+          <div style={{ display: 'flex', gap: '6px', borderTop: '1.5px dashed rgba(255,255,255,0.1)', paddingTop: '6px' }}>
+            {/* Lofi */}
+            <button 
+              onClick={toggleLofi}
+              style={{
+                flex: 1,
+                fontSize: '0.68rem',
+                fontFamily: 'var(--font-hand)',
+                background: isLofi ? 'var(--accent-purple)' : 'rgba(255,255,255,0.04)',
+                color: isLofi ? 'white' : 'rgba(255,255,255,0.8)',
+                border: '1.5px solid var(--text-dark)',
+                borderRadius: '3px',
+                padding: '3px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2px'
+              }}
+            >
+              {isLofi ? <Volume2 size={10} /> : <VolumeX size={10} />} Lofi
+            </button>
+
+            {/* Rain */}
+            <button 
+              onClick={toggleRain}
+              style={{
+                flex: 1,
+                fontSize: '0.68rem',
+                fontFamily: 'var(--font-hand)',
+                background: isRain ? 'var(--accent-mint)' : 'rgba(255,255,255,0.04)',
+                color: isRain ? 'var(--text-dark)' : 'rgba(255,255,255,0.8)',
+                border: '1.5px solid var(--text-dark)',
+                borderRadius: '3px',
+                padding: '3px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2px'
+              }}
+            >
+              <CloudRain size={10} /> Rain
+            </button>
+
+            {/* Typing */}
+            <button 
+              onClick={toggleTyping}
+              style={{
+                flex: 1,
+                fontSize: '0.68rem',
+                fontFamily: 'var(--font-hand)',
+                background: isTyping ? 'var(--accent-yellow)' : 'rgba(255,255,255,0.04)',
+                color: isTyping ? 'var(--text-dark)' : 'rgba(255,255,255,0.8)',
+                border: '1.5px solid var(--text-dark)',
+                borderRadius: '3px',
+                padding: '3px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2px'
+              }}
+            >
+              <Keyboard size={10} /> Type
+            </button>
           </div>
         </div>
 

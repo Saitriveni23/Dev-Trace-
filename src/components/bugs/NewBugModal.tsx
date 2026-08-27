@@ -84,15 +84,25 @@ export default function NewBugModal({ onClose }: Props) {
 
   const steps = ['Notebook Guide', 'Glitch Clues', 'Env trace', 'Review'];
 
-  // Handle Mock screenshot drop/click
+  // Handle Polaroid screenshot drop/click file selector
   const handlePolaroidClick = () => {
     if (mockScreenshot) {
       setMockScreenshot(null);
       showToast('Screenshot removed from Polaroid', 'info');
     } else {
-      setMockScreenshot('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=60');
-      showToast('Screenshot clipped to Polaroid!', 'success');
+      document.getElementById('polaroid-file-picker')?.click();
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setMockScreenshot(reader.result as string);
+      showToast('Polaroid evidence snapshot attached! 📸', 'success');
+    };
+    reader.readAsDataURL(file);
   };
 
   // Handle Microphone tap
@@ -226,8 +236,15 @@ export default function NewBugModal({ onClose }: Props) {
           <div 
             onClick={handlePolaroidClick}
             className="polaroid-dropzone"
-            style={{ margin: '0 auto' }}
+            style={{ margin: '0 auto', cursor: 'pointer' }}
           >
+            <input 
+              type="file" 
+              id="polaroid-file-picker" 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+              onChange={handleFileChange}
+            />
             {mockScreenshot ? (
               <img 
                 src={mockScreenshot} 
