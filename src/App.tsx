@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BugProvider, useBugs } from './context/BugContext';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
 import BugListView from './components/bugs/BugListView';
@@ -18,7 +20,37 @@ import ToastContainer from './components/common/Toast';
 import './index.css';
 
 function AppInner() {
-  const { activeView } = useBugs();
+  const { user, loading } = useAuth();
+  const { activeView, dispatch } = useBugs();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        if (activeView === 'landing' || activeView === 'login') {
+          dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+        }
+      } else {
+        if (activeView !== 'landing' && activeView !== 'login') {
+          dispatch({ type: 'SET_VIEW', payload: 'landing' });
+        }
+      }
+    }
+  }, [user, loading, activeView, dispatch]);
+
+  if (loading) {
+    return (
+      <div style={{ background: 'var(--bg-notebook)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: 'var(--font-marker)', fontSize: '2rem', color: 'var(--accent-yellow)' }}>
+            Examining case files... 🔍
+          </div>
+          <div style={{ fontFamily: 'var(--font-hand)', fontSize: '1.25rem', color: 'white', marginTop: '10px' }}>
+            Unrolling detective notebooks
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (activeView === 'landing') {
     return (
@@ -66,10 +98,13 @@ function AppInner() {
   );
 }
 
+
 export default function App() {
   return (
-    <BugProvider>
-      <AppInner />
-    </BugProvider>
+    <AuthProvider>
+      <BugProvider>
+        <AppInner />
+      </BugProvider>
+    </AuthProvider>
   );
 }

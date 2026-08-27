@@ -3,6 +3,7 @@ import { Search, Plus, Bell, Terminal } from 'lucide-react';
 import { useBugs } from '../../context/BugContext';
 import NewBugModal from '../bugs/NewBugModal';
 import CommandPalette from './CommandPalette';
+import ProfileDropdown from '../ProfileDropdown';
 
 // Cute hand-drawn style Bug Mascot SVG
 const BugMascot = () => (
@@ -120,14 +121,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="polaroid-frame" style={{ display: 'inline-block', lineHeight: 0 }}>
-            <img
-              style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: '2px' }}
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              title={`${currentUser.name} — ${currentUser.role}`}
-            />
-          </div>
+          <ProfileDropdown />
         </div>
       </nav>
 
