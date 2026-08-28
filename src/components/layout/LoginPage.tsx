@@ -1,14 +1,12 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider,
 } from 'firebase/auth';
 
 import { auth } from '../../firebase';
 import React, { useState } from 'react';
 import { useBugs } from '../../context/BugContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -68,6 +66,7 @@ const PencilSketch = () => (
 
 export default function LoginPage() {
   const { dispatch, showToast } = useBugs();
+  const { loginWithGoogle, loginWithGithub } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -113,15 +112,13 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      confetti({
-        particleCount: 140,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-      showToast('Successfully logged in with Google! 🛡️', 'success');
+      const res = await loginWithGoogle();
+      if (res.isMock) {
+        showToast('Firebase Auth inactive. Entered DevTrace via Local Sandbox Session! 🕵️', 'warning');
+      } else {
+        showToast('Successfully logged in with Google! 🛡️', 'success');
+      }
       dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
     } catch (err: any) {
       console.error(err);
@@ -130,15 +127,13 @@ export default function LoginPage() {
   };
 
   const handleGithubLogin = async () => {
-    const provider = new GithubAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      confetti({
-        particleCount: 140,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-      showToast('Successfully logged in with GitHub! 🐙', 'success');
+      const res = await loginWithGithub();
+      if (res.isMock) {
+        showToast('GitHub Auth simulated. Connected to Github via Local Sandbox! 🐙', 'warning');
+      } else {
+        showToast('Successfully logged in with GitHub! 🐙', 'success');
+      }
       dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
     } catch (err: any) {
       console.error(err);

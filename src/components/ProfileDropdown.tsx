@@ -39,8 +39,12 @@ export default function ProfileDropdown() {
   const handleGoogleLogin = async () => {
     setIsLoggingIn(true);
     try {
-      await loginWithGoogle();
-      showToast('Successfully logged in with Google! 🛡️', 'success');
+      const res = await loginWithGoogle();
+      if (res.isMock) {
+        showToast('Firebase Auth inactive. Entered DevTrace via Local Sandbox Session! 🕵️', 'warning');
+      } else {
+        showToast('Successfully logged in with Google! 🛡️', 'success');
+      }
       dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
     } catch (err: any) {
       console.error(err);
