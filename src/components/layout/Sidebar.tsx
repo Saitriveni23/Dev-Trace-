@@ -109,7 +109,7 @@ export default function Sidebar() {
           <span>{v.label}</span>
           {v.count !== null && v.count !== undefined && v.count > 0 && (
             <span className="sidebar-item-count" style={
-              v.id === 'security' ? { background: 'rgba(255, 123, 107, 0.2)', color: 'var(--accent-coral)' } : {}
+              (v.id as string) === 'security' ? { background: 'rgba(255, 123, 107, 0.2)', color: 'var(--accent-coral)' } : {}
             }>{v.count}</span>
           )}
         </div>
