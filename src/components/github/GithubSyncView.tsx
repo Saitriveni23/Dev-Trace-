@@ -126,11 +126,13 @@ export default function GithubSyncView() {
           <span className="view-count" style={{ marginLeft: '12px' }}>Repository Integration Portal</span>
         </div>
 
-        <button 
+        <button
           onClick={handleRepositorySync}
           disabled={isSyncing || githubIssues.length === 0}
           className="navbar-btn navbar-btn-primary"
           style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: githubIssues.length === 0 ? 0.6 : 1 }}
+          data-tooltip={githubIssues.length === 0 ? 'No remote issues left to sync' : isSyncing ? 'Sync in progress...' : 'Import remote GitHub issues as bugs'}
+          data-tooltip-pos="bottom"
         >
           <RefreshCw size={14} className={isSyncing ? 'spin-anim' : ''} />
           <span>{isSyncing ? 'Syncing...' : 'Sync Repository Issues'}</span>

@@ -63,6 +63,7 @@ export default function SecurityPortal() {
                   key={bug.id}
                   className="embargo-card"
                   onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
+                  data-tooltip="Open this embargoed bug's details"
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                     <Lock size={13} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
@@ -159,6 +160,7 @@ export default function SecurityPortal() {
                   borderRadius: 'var(--radius-md)', cursor: 'pointer', transition: 'all 0.15s'
                 }}
                 onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
+                data-tooltip="Open this resolved CVE's details"
               >
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-success)' }}>
                   {bug.security.cveId ?? '—'}

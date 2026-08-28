@@ -116,6 +116,7 @@ export default function SettingsView() {
               <button
                 key={t.id}
                 onClick={() => setTheme(t.id as any)}
+                data-tooltip={theme === t.id ? `${t.label} is active` : `Switch to ${t.label} theme`}
                 style={{
                   flex: 1,
                   padding: '10px 6px',
@@ -188,6 +189,7 @@ export default function SettingsView() {
                   <span style={{ fontSize: '0.84rem', color: '#D1D5DB' }}>{labels[key]}</span>
                   <div
                     onClick={() => toggleNotif(key as any)}
+                    data-tooltip={val ? `Turn off ${labels[key].replace(/^\S+\s/, '').toLowerCase()}` : `Turn on ${labels[key].replace(/^\S+\s/, '').toLowerCase()}`}
                     style={{
                       width: '38px',
                       height: '20px',
@@ -254,6 +256,7 @@ export default function SettingsView() {
                   transform: `rotate(${intg.id === 'slack' ? '1.5deg' : intg.id === 'vscode' ? '-1deg' : intg.id === 'firebase' ? '1deg' : '-0.5deg'})`
                 }}
                 onClick={() => setIntegrations(prev => ({ ...prev, [intg.id]: !prev[intg.id] }))}
+                data-tooltip={integrations[intg.id] ? `Disconnect ${intg.label}` : `Connect ${intg.label}`}
               >
                 <div style={{ color: intg.color, marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
                   {intg.icon}

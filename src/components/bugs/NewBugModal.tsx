@@ -233,10 +233,11 @@ export default function NewBugModal({ onClose }: Props) {
           </div>
 
           {/* Polaroid drag screenshot frame */}
-          <div 
+          <div
             onClick={handlePolaroidClick}
             className="polaroid-dropzone"
             style={{ margin: '0 auto', cursor: 'pointer' }}
+            data-tooltip={mockScreenshot ? 'Remove the attached screenshot' : 'Attach a screenshot as evidence'}
           >
             <input 
               type="file" 
@@ -266,6 +267,7 @@ export default function NewBugModal({ onClose }: Props) {
           <button
             type="button"
             onClick={handleMicClick}
+            data-tooltip={isRecording ? 'Stop recording and insert the transcript' : 'Record a voice note describing the bug'}
             style={{
               alignSelf: 'center',
               display: 'flex',
@@ -315,7 +317,7 @@ export default function NewBugModal({ onClose }: Props) {
           {/* Header */}
           <div className="modal-header-handwritten" style={{ borderBottom: '2.5px solid var(--text-dark)' }}>
             <span className="modal-title-marker">Investigation Case-Log</span>
-            <button className="modal-close-doodle" onClick={onClose}><X size={16} strokeWidth={2.5} /></button>
+            <button className="modal-close-doodle" onClick={onClose} data-tooltip="Close without saving" data-tooltip-pos="bottom"><X size={16} strokeWidth={2.5} /></button>
           </div>
 
           {/* Multi-step Notebook Tabs */}
@@ -324,6 +326,7 @@ export default function NewBugModal({ onClose }: Props) {
               <div
                 key={i}
                 onClick={() => i <= step && setStep(i)}
+                data-tooltip={i <= step ? `Go to step ${i + 1}: ${s}` : `Complete earlier steps to unlock "${s}"`}
                 style={{
                   fontFamily: 'var(--font-hand)',
                   fontSize: '1.1rem',
@@ -407,6 +410,7 @@ export default function NewBugModal({ onClose }: Props) {
                         key={p}
                         type="button"
                         onClick={() => setPriority(p)}
+                        data-tooltip={`Set priority to ${p}`}
                         style={{
                           flex: 1, padding: '6px', borderRadius: '4px', fontWeight: 950,
                           border: '2px solid var(--text-dark)',
@@ -582,14 +586,15 @@ export default function NewBugModal({ onClose }: Props) {
           {/* Footer actions */}
           <div className="form-actions-notebook">
             {step > 0 && (
-              <button className="btn btn-secondary" style={{ border: '2px solid var(--text-dark)', color: 'var(--text-dark)' }} onClick={() => setStep(s => s - 1)}>← Back</button>
+              <button className="btn btn-secondary" style={{ border: '2px solid var(--text-dark)', color: 'var(--text-dark)' }} onClick={() => setStep(s => s - 1)} data-tooltip="Go back to the previous step">← Back</button>
             )}
-            <button className="btn btn-ghost" style={{ color: 'rgba(31,30,37,0.6)' }} onClick={onClose}>Cancel</button>
+            <button className="btn btn-ghost" style={{ color: 'rgba(31,30,37,0.6)' }} onClick={onClose} data-tooltip="Discard this bug report and close">Cancel</button>
             {step < steps.length - 1 ? (
               <button
                 className="btn btn-primary"
                 onClick={() => setStep(s => s + 1)}
                 disabled={step === 0 && !component}
+                data-tooltip={step === 0 && !component ? 'Choose a subcomponent to continue' : 'Continue to the next step'}
               >
                 Next →
               </button>
@@ -598,6 +603,7 @@ export default function NewBugModal({ onClose }: Props) {
                 className="btn btn-primary"
                 onClick={handleSubmit}
                 disabled={!title.trim() || !component}
+                data-tooltip={!title.trim() || !component ? 'A case summary and subcomponent are required' : 'Submit this bug report'}
                 style={{
                   background: 'var(--accent-yellow)',
                   color: 'var(--text-dark)',

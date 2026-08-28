@@ -297,6 +297,8 @@ export default function TeamView() {
           />
           <button
             onClick={handleInvite}
+            data-tooltip="Send an invite email to join the squad"
+            data-tooltip-pos="bottom"
             style={{
               background: '#FBBF24',
               color: '#111827',

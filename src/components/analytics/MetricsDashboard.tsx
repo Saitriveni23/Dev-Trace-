@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useBugs } from '../../context/BugContext';
-import { 
-  BarChart2, TrendingDown, Clock, ShieldAlert, Zap, Coffee, 
+import {
+  BarChart2, TrendingDown, Clock, ShieldAlert, Zap, Coffee,
   Sparkles, Smile, Bug, CheckSquare, Square, Search, Bell, Sun, Moon,
-  Volume2, VolumeX, CloudRain, Keyboard
+  Volume2, VolumeX, CloudRain, Keyboard, BookOpen, ChevronDown
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -196,6 +196,7 @@ export default function MetricsDashboard() {
   const [devMood, setDevMood] = useState('Energetic ⚡');
   const [toggleDark, setToggleDark] = useState(true);
   const [museumIndex, setMuseumIndex] = useState(0);
+  const [howToOpen, setHowToOpen] = useState(true);
 
   // Ambient sound state toggles
   const [isLofi, setIsLofi] = useState(false);
@@ -309,7 +310,60 @@ export default function MetricsDashboard() {
         gap: '24px'
       }}
     >
-      
+
+      {/* HOW TO USE: onboarding guide, collapsible */}
+      <div className="howto-section">
+        <div className="howto-header" onClick={() => setHowToOpen(o => !o)}>
+          <div className="howto-header-title">
+            <BookOpen size={18} />
+            <span>How to Use DevTrace</span>
+          </div>
+          <button
+            className={`howto-toggle-btn ${howToOpen ? 'open' : ''}`}
+            onClick={(e) => { e.stopPropagation(); setHowToOpen(o => !o); }}
+            data-tooltip={howToOpen ? 'Collapse this guide' : 'Expand this guide'}
+            data-tooltip-pos="left"
+            aria-label={howToOpen ? 'Collapse how-to guide' : 'Expand how-to guide'}
+          >
+            <ChevronDown size={16} />
+          </button>
+        </div>
+        {howToOpen && (
+          <div className="howto-body">
+            <div className="howto-step">
+              <div className="howto-step-num">STEP 1</div>
+              <div className="howto-step-title">Report a bug</div>
+              <div className="howto-step-desc">Click "New Sticker" in the top navbar (or press ⌘N / Ctrl+N) to file a new bug report.</div>
+            </div>
+            <div className="howto-step">
+              <div className="howto-step-num">STEP 2</div>
+              <div className="howto-step-title">Track your work</div>
+              <div className="howto-step-desc">Use the sidebar to switch between the Bugs list, Kanban Board, and Reports views.</div>
+            </div>
+            <div className="howto-step">
+              <div className="howto-step-num">STEP 3</div>
+              <div className="howto-step-title">Find anything fast</div>
+              <div className="howto-step-desc">Search bugs from the navbar, or open the command palette with ⌘K / Ctrl+K to jump to any view or filter.</div>
+            </div>
+            <div className="howto-step">
+              <div className="howto-step-num">STEP 4</div>
+              <div className="howto-step-title">Dig into insights</div>
+              <div className="howto-step-desc">Visit Analytics for trend charts, or the AI Assistant for triage suggestions on tricky bugs.</div>
+            </div>
+            <div className="howto-step">
+              <div className="howto-step-num">STEP 5</div>
+              <div className="howto-step-title">Collaborate with your team</div>
+              <div className="howto-step-desc">Check Team to see teammates, and GitHub Sync to link bugs to commits and pull requests.</div>
+            </div>
+            <div className="howto-step">
+              <div className="howto-step-num">TIP</div>
+              <div className="howto-step-title">Hover for help</div>
+              <div className="howto-step-desc">Hover over any button across the app to see a quick tooltip explaining what it does.</div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* ROW 1: Top Bar (Search, Notifications, Theme, Profile) */}
       <div 
         style={{
@@ -335,18 +389,22 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Notifications Pinned like paper clip */}
-        <div 
+        <div
           onClick={() => showToast('No new case alerts pins!', 'info')}
           style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.1rem' }}
+          data-tooltip="Check your notifications"
+          data-tooltip-pos="bottom"
         >
           <Bell size={16} style={{ color: 'var(--accent-purple)' }} />
           <span>Notifications (0)</span>
         </div>
 
         {/* Theme switch */}
-        <div 
+        <div
           onClick={() => setToggleDark(!toggleDark)}
           style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.1rem' }}
+          data-tooltip="Toggle between the dark and light notebook cover"
+          data-tooltip-pos="bottom"
         >
           {toggleDark ? <Moon size={16} style={{ color: 'var(--accent-yellow)' }} /> : <Sun size={16} style={{ color: 'var(--accent-yellow)' }} />}
           <span>{toggleDark ? 'Dark Cover' : 'Light Cover'}</span>
@@ -488,10 +546,11 @@ export default function MetricsDashboard() {
           <div style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-coral)' }}>mood stamp</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px' }}>
             {['Energetic ⚡', 'Coffee High ☕', 'Zzz Sleepy 💤'].map(mood => (
-              <button 
+              <button
                 key={mood}
                 onClick={() => { setDevMood(mood); showToast(`Mood updated to ${mood}!`, 'success'); }}
                 className={`mood-sticker ${devMood === mood ? 'active' : ''}`}
+                data-tooltip={`Set your mood stamp to "${mood}"`}
                 style={{
                   fontSize: '0.72rem',
                   background: devMood === mood ? 'var(--accent-yellow)' : 'var(--paper-beige)',
@@ -514,6 +573,7 @@ export default function MetricsDashboard() {
                 key={p.id}
                 onClick={() => handlePriorityToggle(p.id)}
                 style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '0.98rem' }}
+                data-tooltip={p.done ? 'Mark this priority as not done' : 'Mark this priority as done'}
               >
                 <span style={{ color: 'var(--accent-yellow)' }}>{p.done ? <CheckSquare size={13} /> : <Square size={13} />}</span>
                 <span style={{ textDecoration: p.done ? 'line-through' : 'none', opacity: p.done ? 0.5 : 1 }}>{p.text}</span>
@@ -550,19 +610,20 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Bug Museum */}
-        <div 
+        <div
           onClick={() => setMuseumIndex(idx => (idx + 1) % MUSEUM_BUGS.length)}
-          style={{ 
-            background: 'white', 
-            color: 'var(--text-dark)', 
-            border: '2.5px solid var(--text-dark)', 
-            borderRadius: '6px', 
-            padding: '12px 14px', 
-            position: 'relative', 
+          style={{
+            background: 'white',
+            color: 'var(--text-dark)',
+            border: '2.5px solid var(--text-dark)',
+            borderRadius: '6px',
+            padding: '12px 14px',
+            position: 'relative',
             boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
             transform: 'rotate(1.5deg)',
             cursor: 'pointer'
           }}
+          data-tooltip="Click to cycle through the Bug Museum's featured oddities"
         >
           <div className="tape-strip" style={{ width: '50px', top: '-8px' }}></div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.55rem', fontWeight: 900, color: 'rgba(0,0,0,0.4)', textTransform: 'uppercase' }}>
@@ -591,18 +652,19 @@ export default function MetricsDashboard() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div onClick={handleCoffeeClick} style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
+            <div onClick={handleCoffeeClick} style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }} data-tooltip="Log a cup of coffee (resets after 5)">
               <span style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-yellow)' }}>caffeine monitor</span>
               <span style={{ fontFamily: 'var(--font-hand)', fontSize: '0.92rem', opacity: 0.7 }}>{coffeeCups}/5 cups (click to fill)</span>
             </div>
-            <Coffee onClick={handleCoffeeClick} size={20} style={{ color: coffeeCups > 0 ? 'var(--accent-yellow)' : 'white', cursor: 'pointer' }} />
+            <Coffee onClick={handleCoffeeClick} size={20} style={{ color: coffeeCups > 0 ? 'var(--accent-yellow)' : 'white', cursor: 'pointer' }} data-tooltip="Log a cup of coffee" />
           </div>
           
           {/* Ambient Soundboard Toggles */}
           <div style={{ display: 'flex', gap: '6px', borderTop: '1.5px dashed rgba(255,255,255,0.1)', paddingTop: '6px' }}>
             {/* Lofi */}
-            <button 
+            <button
               onClick={toggleLofi}
+              data-tooltip={isLofi ? 'Pause the lo-fi beat loop' : 'Play a looping lo-fi beat'}
               style={{
                 flex: 1,
                 fontSize: '0.68rem',
@@ -623,8 +685,9 @@ export default function MetricsDashboard() {
             </button>
 
             {/* Rain */}
-            <button 
+            <button
               onClick={toggleRain}
+              data-tooltip={isRain ? 'Pause the rainfall ambience' : 'Play looping rainfall ambience'}
               style={{
                 flex: 1,
                 fontSize: '0.68rem',
@@ -645,8 +708,9 @@ export default function MetricsDashboard() {
             </button>
 
             {/* Typing */}
-            <button 
+            <button
               onClick={toggleTyping}
+              data-tooltip={isTyping ? 'Pause the keyboard click-clack sounds' : 'Play looping keyboard click-clack sounds'}
               style={{
                 flex: 1,
                 fontSize: '0.68rem',

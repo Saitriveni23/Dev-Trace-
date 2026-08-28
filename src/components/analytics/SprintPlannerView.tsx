@@ -168,6 +168,7 @@ export default function SprintPlannerView() {
                     transform: `rotate(${(g.id % 2 === 0 ? -1 : 1.5)}deg)`,
                     cursor: 'pointer'
                   }}
+                  data-tooltip={g.done ? 'Mark this goal as not done' : 'Mark this goal as done'}
                 >
                   <div className="tape-strip" style={{ width: '40px', top: '-10px', left: '15px' }}></div>
                   <div style={{ color: 'var(--text-dark)' }}>

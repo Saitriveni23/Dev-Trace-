@@ -59,7 +59,7 @@ const PlayfulEmptyState = ({ onClear }: { onClear: () => void }) => (
     <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '8px 0 20px', maxWidth: '320px' }}>
       Either your query returned nothing or the bugs have crawled away to hide!
     </div>
-    <button className="btn btn-primary" onClick={onClear}>
+    <button className="btn btn-primary" onClick={onClear} data-tooltip="Clear all filters and search terms">
       Reset BugStudio Filters
     </button>
   </div>
@@ -148,11 +148,11 @@ export default function BugListView() {
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {hasActiveFilters && (
-            <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ color: 'var(--accent-coral)', fontSize: '0.78rem' }}>
+            <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ color: 'var(--accent-coral)', fontSize: '0.78rem' }} data-tooltip="Clear all active filters and search">
               <X size={13} /> Wipe Filters
             </button>
           )}
-          <button className={`btn btn-secondary btn-sm ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(f => !f)}>
+          <button className={`btn btn-secondary btn-sm ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(f => !f)} data-tooltip={showFilters ? 'Hide the filter bar' : 'Show filters for status, severity, and priority'}>
             <Filter size={13} /> filter clip
           </button>
         </div>
@@ -167,6 +167,7 @@ export default function BugListView() {
               key={s}
               className={`filter-chip ${filterStatus === s ? 'active' : ''}`}
               onClick={() => dispatch({ type: 'SET_FILTER_STATUS', payload: filterStatus === s ? null : s })}
+              data-tooltip={filterStatus === s ? `Remove the ${s.replace('_', ' ')} filter` : `Show only ${s.replace('_', ' ')} bugs`}
             >
               {s.replace('_', ' ')}
             </button>
@@ -178,6 +179,7 @@ export default function BugListView() {
               key={s}
               className={`filter-chip ${filterSeverity === s ? 'active' : ''}`}
               onClick={() => dispatch({ type: 'SET_FILTER_SEVERITY', payload: filterSeverity === s ? null : s })}
+              data-tooltip={filterSeverity === s ? `Remove the ${s} severity filter` : `Show only ${s} severity bugs`}
             >
               {s}
             </button>
@@ -188,6 +190,7 @@ export default function BugListView() {
               key={p}
               className={`filter-chip ${filterPriority === p ? 'active' : ''}`}
               onClick={() => dispatch({ type: 'SET_FILTER_PRIORITY', payload: filterPriority === p ? null : p })}
+              data-tooltip={filterPriority === p ? `Remove the ${p} priority filter` : `Show only ${p} priority bugs`}
             >
               {p}
             </button>
@@ -208,13 +211,13 @@ export default function BugListView() {
         {/* Sort triggers */}
         <div style={{ display: 'flex', gap: 10, fontSize: '0.72rem', color: 'var(--text-muted)' }}>
           <span>Sort notebooks by:</span>
-          <span style={{ cursor: 'pointer', color: sortKey === 'updatedAt' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('updatedAt')}>
+          <span style={{ cursor: 'pointer', color: sortKey === 'updatedAt' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('updatedAt')} data-tooltip="Sort by last updated time" data-tooltip-pos="bottom">
             Updated <SortIcon k="updatedAt" />
           </span>
-          <span style={{ cursor: 'pointer', color: sortKey === 'severity' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('severity')}>
+          <span style={{ cursor: 'pointer', color: sortKey === 'severity' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('severity')} data-tooltip="Sort by severity" data-tooltip-pos="bottom">
             Severity <SortIcon k="severity" />
           </span>
-          <span style={{ cursor: 'pointer', color: sortKey === 'priority' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('priority')}>
+          <span style={{ cursor: 'pointer', color: sortKey === 'priority' ? 'var(--accent-yellow)' : 'inherit' }} onClick={() => toggleSort('priority')} data-tooltip="Sort by priority" data-tooltip-pos="bottom">
             Priority <SortIcon k="priority" />
           </span>
         </div>
@@ -265,6 +268,7 @@ function BugCard({
       className={`bug-card-notebook bug-card-color-${colorIndex} ${selected ? 'selected' : ''}`}
       onClick={onClick}
       style={{ transform: `rotate(${angle}deg)` }}
+      data-tooltip={selected ? 'Click to close this bug\'s details' : 'Click to open full bug details'}
     >
       {/* masking tape strip decoration */}
       <div className="tape-strip"></div>

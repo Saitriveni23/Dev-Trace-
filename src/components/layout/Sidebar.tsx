@@ -82,16 +82,16 @@ export default function Sidebar() {
   const openCount = bugs.filter(b => !['CLOSED'].includes(b.status)).length;
 
   const views = [
-    { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null },
-    { id: 'list', icon: <Bug size={15} />, label: 'Bugs', count: openCount },
-    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Board', count: null },
-    { id: 'graph', icon: <GitBranch size={15} />, label: 'Reports', count: null },
-    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'Analytics', count: null },
-    { id: 'assistant', icon: <Sparkles size={15} />, label: 'AI Assistant', count: null },
-    { id: 'team', icon: <Users size={15} />, label: 'Team', count: null },
-    { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null },
-    { id: 'sketch', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null },
-    { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null },
+    { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null, tooltip: 'See key bug metrics and stats at a glance' },
+    { id: 'list', icon: <Bug size={15} />, label: 'Bugs', count: openCount, tooltip: 'Browse and manage every reported bug in a list' },
+    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Board', count: null, tooltip: 'Drag bugs across a Kanban board by status' },
+    { id: 'graph', icon: <GitBranch size={15} />, label: 'Reports', count: null, tooltip: 'Explore how bugs and files depend on each other' },
+    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'Analytics', count: null, tooltip: 'Dive into bug trends and analytics charts' },
+    { id: 'assistant', icon: <Sparkles size={15} />, label: 'AI Assistant', count: null, tooltip: 'Chat with the AI assistant for bug triage help' },
+    { id: 'team', icon: <Users size={15} />, label: 'Team', count: null, tooltip: 'View and manage your team members' },
+    { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null, tooltip: 'Configure your account and app preferences' },
+    { id: 'sketch', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null, tooltip: 'Sketch and brainstorm ideas on a free-form canvas' },
+    { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null, tooltip: 'Sync bugs and pull requests with GitHub' },
   ] as const;
 
   return (
@@ -104,6 +104,8 @@ export default function Sidebar() {
           className={`sidebar-item ${activeView === v.id ? 'active' : ''}`}
           style={activeView === v.id ? { background: '#FBBF24', color: '#111827', fontWeight: 800, borderRadius: '4px', boxShadow: '2px 2px 0px rgba(0,0,0,0.95)' } : {}}
           onClick={() => dispatch({ type: 'SET_VIEW', payload: v.id as typeof activeView })}
+          data-tooltip={v.tooltip}
+          data-tooltip-pos="bottom"
         >
           <span className="sidebar-item-icon" style={activeView === v.id ? { color: '#111827' } : {}}>{v.icon}</span>
           <span>{v.label}</span>
@@ -122,6 +124,8 @@ export default function Sidebar() {
       <div
         className={`product-chip ${!filterProduct ? 'active' : ''}`}
         onClick={() => dispatch({ type: 'SET_FILTER_PRODUCT', payload: null })}
+        data-tooltip="Show bugs from all projects"
+        data-tooltip-pos="bottom"
       >
         <div className="product-chip-icon" style={{ background: '#252431', color: 'var(--text-muted)' }}>
           <Bug size={12} />
@@ -136,6 +140,8 @@ export default function Sidebar() {
             key={p.id}
             className={`product-chip ${filterProduct === p.name ? 'active' : ''}`}
             onClick={() => dispatch({ type: 'SET_FILTER_PRODUCT', payload: filterProduct === p.name ? null : p.name })}
+            data-tooltip={`Filter bugs to the "${p.name}" project`}
+            data-tooltip-pos="bottom"
           >
             <div
               className="product-chip-icon"
@@ -163,7 +169,8 @@ export default function Sidebar() {
               if (s.queryString) dispatch({ type: 'SET_SEARCH_QUERY', payload: s.queryString });
               dispatch({ type: 'SET_VIEW', payload: 'list' });
             }}
-            title={s.description}
+            data-tooltip={s.description || `Run the saved search "${s.name}"`}
+            data-tooltip-pos="bottom"
           >
             <span className="sidebar-item-icon"><Icon size={14} /></span>
             <span style={{ fontSize: '0.82rem' }}>{s.name}</span>
@@ -186,6 +193,8 @@ export default function Sidebar() {
               dispatch({ type: 'SET_FILTER_STATUS', payload: status as any });
               dispatch({ type: 'SET_VIEW', payload: 'list' });
             }}
+            data-tooltip={`Show only ${status.replace('_', ' ').toLowerCase()} bugs`}
+            data-tooltip-pos="bottom"
           >
             <span
               className="sidebar-item-icon"

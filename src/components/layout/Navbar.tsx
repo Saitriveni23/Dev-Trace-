@@ -76,7 +76,13 @@ export default function Navbar() {
   return (
     <>
       <nav className="navbar">
-        <div className="navbar-brand" onClick={() => dispatch({ type: 'SET_VIEW', payload: 'landing' })} style={{ cursor: 'pointer' }}>
+        <div
+          className="navbar-brand"
+          onClick={() => dispatch({ type: 'SET_VIEW', payload: 'landing' })}
+          style={{ cursor: 'pointer' }}
+          data-tooltip="Go back to the DevTrace landing page"
+          data-tooltip-pos="bottom"
+        >
           <div className="brand-logo-container">
             <BugMascot />
           </div>
@@ -92,6 +98,7 @@ export default function Navbar() {
             placeholder="Search sketchnotes, bug IDs, tags… (⌘K)"
             value={searchQuery}
             onChange={e => dispatch({ type: 'SET_SEARCH_QUERY', payload: e.target.value })}
+            title="Search across bugs by title, ID, or tag"
           />
           <div className="navbar-search-shortcut">
             <span className="kbd">⌘</span>
@@ -103,19 +110,31 @@ export default function Navbar() {
           <button
             className="navbar-btn navbar-btn-primary"
             onClick={() => setShowNewBug(true)}
-            title="New Sticky Note (⌘N)"
+            data-tooltip="Report a new bug (shortcut: ⌘N / Ctrl+N)"
+            data-tooltip-pos="bottom"
+            aria-label="New Sticker"
           >
             <Plus size={15} strokeWidth={2.5} />
             New Sticker
           </button>
 
-          <button className="navbar-icon-btn" title="Notebook Command Line">
+          <button
+            className="navbar-icon-btn"
+            data-tooltip="Notebook command line (open the full command palette with ⌘K / Ctrl+K)"
+            data-tooltip-pos="bottom"
+            aria-label="Command line"
+          >
             <Terminal size={16} />
           </button>
 
           <div className="paper-clip-container">
             <div className="paper-clip-decoration" />
-            <button className="navbar-icon-btn" title="Alerts & Scribbles">
+            <button
+              className="navbar-icon-btn"
+              data-tooltip="View alerts and notifications"
+              data-tooltip-pos="bottom"
+              aria-label="Notifications"
+            >
               <Bell size={16} />
               <span className="notification-dot" />
             </button>

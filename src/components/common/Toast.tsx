@@ -21,6 +21,8 @@ export default function ToastContainer() {
           <button
             className="toast-close"
             onClick={() => dispatch({ type: 'REMOVE_TOAST', payload: t.id })}
+            data-tooltip="Dismiss this notification"
+            data-tooltip-pos="left"
           >
             <X size={14} />
           </button>

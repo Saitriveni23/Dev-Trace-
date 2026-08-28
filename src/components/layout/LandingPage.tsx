@@ -90,12 +90,12 @@ export default function LandingPage() {
 
         {/* Action button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button 
+          <button
             onClick={handleLiveDemo}
             className="navbar-btn"
-            style={{ 
-              background: 'transparent', 
-              color: '#FFFFFF', 
+            style={{
+              background: 'transparent',
+              color: '#FFFFFF',
               border: '2px solid rgba(255,255,255,0.15)',
               padding: '8px 18px',
               fontFamily: 'var(--font-sans)',
@@ -104,6 +104,8 @@ export default function LandingPage() {
               borderRadius: '4px',
               cursor: 'pointer'
             }}
+            data-tooltip="Skip login and jump into the dashboard"
+            data-tooltip-pos="bottom"
           >
             Access Board
           </button>
@@ -175,6 +177,7 @@ export default function LandingPage() {
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              data-tooltip="Go to login and start tracking bugs"
             >
               Start Tracking <ArrowRight size={16} strokeWidth={2.5} />
             </button>
@@ -199,6 +202,7 @@ export default function LandingPage() {
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              data-tooltip="Skip login and explore a live demo"
             >
               Live Demo <BookOpen size={16} />
             </button>

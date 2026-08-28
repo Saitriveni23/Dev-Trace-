@@ -193,6 +193,7 @@ export default function AIAssistantView() {
             onClick={() => handleFeatureClick('explain')}
             className="mood-sticker"
             style={{ width: '100%', textAlign: 'left', background: 'var(--paper-beige)', display: 'flex', alignItems: 'center', gap: '6px', transform: 'rotate(-1.5deg)' }}
+            data-tooltip="Ask BugBot to explain this error's stack trace"
           >
             <Terminal size={12} /> Explain Error
           </button>
@@ -201,6 +202,7 @@ export default function AIAssistantView() {
             onClick={() => handleFeatureClick('duplicate')}
             className="mood-sticker"
             style={{ width: '100%', textAlign: 'left', background: 'var(--paper-yellow)', display: 'flex', alignItems: 'center', gap: '6px', transform: 'rotate(1deg)' }}
+            data-tooltip="Ask BugBot to find duplicate bug reports"
           >
             <Bug size={12} /> Find Duplicate
           </button>
@@ -209,6 +211,7 @@ export default function AIAssistantView() {
             onClick={() => handleFeatureClick('fix')}
             className="mood-sticker"
             style={{ width: '100%', textAlign: 'left', background: 'var(--paper-blue)', display: 'flex', alignItems: 'center', gap: '6px', transform: 'rotate(-2deg)' }}
+            data-tooltip="Ask BugBot to suggest a fix"
           >
             <Sparkles size={12} /> Suggest Fix
           </button>
@@ -217,6 +220,7 @@ export default function AIAssistantView() {
             onClick={() => handleFeatureClick('test')}
             className="mood-sticker"
             style={{ width: '100%', textAlign: 'left', background: 'var(--paper-pink)', display: 'flex', alignItems: 'center', gap: '6px', transform: 'rotate(1.5deg)' }}
+            data-tooltip="Ask BugBot to generate test cases"
           >
             <FileCode size={12} /> Test Cases
           </button>
@@ -225,6 +229,7 @@ export default function AIAssistantView() {
             onClick={() => handleFeatureClick('assign')}
             className="mood-sticker"
             style={{ width: '100%', textAlign: 'left', background: 'var(--paper-blue)', display: 'flex', alignItems: 'center', gap: '6px', transform: 'rotate(-1deg)' }}
+            data-tooltip="Ask BugBot to assign a developer to this issue"
           >
             <UserPlus size={12} /> Assign Dev
           </button>
@@ -314,7 +319,7 @@ export default function AIAssistantView() {
               }}
             />
           </div>
-          <button 
+          <button
             type="submit"
             className="btn btn-primary"
             style={{
@@ -322,6 +327,7 @@ export default function AIAssistantView() {
               transform: 'rotate(-1.5deg)',
               padding: '10px 18px'
             }}
+            data-tooltip="Send this message to BugBot"
           >
             <Send size={15} />
           </button>

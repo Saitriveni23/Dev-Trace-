@@ -181,19 +181,21 @@ export default function SketchBoardView() {
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', background: '#17161F', padding: '6px 12px', borderRadius: '6px', border: '2px solid var(--text-dark)' }}>
           {/* Tool Toggles */}
           <button 
-            onClick={() => setTool('pen')} 
+            onClick={() => setTool('pen')}
             className={`navbar-icon-btn ${tool === 'pen' ? 'active' : ''}`}
             style={{ background: tool === 'pen' ? 'var(--accent-purple)' : 'transparent', border: 'none', borderRadius: '4px', padding: '6px', cursor: 'pointer' }}
-            title="Marker Pen"
+            data-tooltip={tool === 'pen' ? 'Pen tool active' : 'Switch to the marker pen'}
+            data-tooltip-pos="bottom"
           >
             <Pencil size={15} style={{ color: tool === 'pen' ? 'white' : 'var(--accent-purple)' }} />
           </button>
           
           <button 
-            onClick={() => setTool('eraser')} 
+            onClick={() => setTool('eraser')}
             className={`navbar-icon-btn ${tool === 'eraser' ? 'active' : ''}`}
             style={{ background: tool === 'eraser' ? 'var(--accent-yellow)' : 'transparent', border: 'none', borderRadius: '4px', padding: '6px', cursor: 'pointer' }}
-            title="Board Eraser"
+            data-tooltip={tool === 'eraser' ? 'Eraser tool active' : 'Switch to the eraser'}
+            data-tooltip-pos="bottom"
           >
             <Eraser size={15} style={{ color: tool === 'eraser' ? 'var(--text-dark)' : 'var(--accent-yellow)' }} />
           </button>
@@ -213,6 +215,8 @@ export default function SketchBoardView() {
                   cursor: 'pointer',
                   transform: color === c ? 'scale(1.15)' : 'scale(1)'
                 }}
+                data-tooltip="Set pen color"
+                data-tooltip-pos="bottom"
               />
             ))}
           </div>
@@ -233,6 +237,8 @@ export default function SketchBoardView() {
                   padding: '2px 6px',
                   cursor: 'pointer'
                 }}
+                data-tooltip={`Set pen thickness to ${t === 2 ? 'Fine' : t === 4 ? 'Med' : 'Bold'}`}
+                data-tooltip-pos="bottom"
               >
                 {t === 2 ? 'Fine' : t === 4 ? 'Med' : 'Bold'}
               </button>
@@ -241,19 +247,23 @@ export default function SketchBoardView() {
 
           <div style={{ borderLeft: '1.5px dashed rgba(255,255,255,0.15)', paddingLeft: '8px', display: 'flex', gap: '8px' }}>
             {/* Add Sticky Note */}
-            <button 
-              onClick={addSticky} 
+            <button
+              onClick={addSticky}
               className="navbar-btn navbar-btn-primary"
               style={{ padding: '4px 8px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+              data-tooltip="Pin a new sticky note to the board"
+              data-tooltip-pos="bottom"
             >
               <Plus size={12} strokeWidth={3} /> Sticky
             </button>
 
             {/* Clear Board */}
-            <button 
-              onClick={clearCanvas} 
+            <button
+              onClick={clearCanvas}
               className="navbar-btn"
               style={{ background: 'var(--accent-coral)', color: 'white', padding: '4px 8px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px', border: '1.5px solid var(--text-dark)' }}
+              data-tooltip="Erase all drawings from the canvas"
+              data-tooltip-pos="bottom"
             >
               <Trash2 size={12} /> Clear
             </button>
@@ -323,9 +333,10 @@ export default function SketchBoardView() {
               <div className="tape-strip" style={{ width: '45px', top: '-8px', left: '15px' }}></div>
               
               {/* Delete tag */}
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); removeSticky(s.id); }}
                 style={{ position: 'absolute', top: '2px', right: '4px', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold', color: 'rgba(0,0,0,0.45)' }}
+                data-tooltip="Remove this sticky note"
               >
                 ✕
               </button>

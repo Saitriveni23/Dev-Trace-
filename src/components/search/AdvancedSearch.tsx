@@ -115,6 +115,7 @@ export default function AdvancedSearch() {
               key={c}
               className={`btn btn-sm ${conjunction === c ? 'btn-primary' : 'btn-secondary'}`}
               onClick={() => setConjunction(c)}
+              data-tooltip={conjunction === c ? `Matching ${c} of the conditions` : `Match ${c} of the conditions`}
             >{c}</button>
           ))}
           <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>of the following conditions:</span>
@@ -153,6 +154,7 @@ export default function AdvancedSearch() {
                 style={{ color: 'var(--color-danger)', flexShrink: 0 }}
                 onClick={() => removeCondition(cond.id)}
                 disabled={conditions.length === 1}
+                data-tooltip={conditions.length === 1 ? 'At least one condition is required' : 'Remove this condition'}
               >
                 <X size={14} />
               </button>
@@ -161,14 +163,14 @@ export default function AdvancedSearch() {
         </div>
 
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary btn-sm" onClick={addCondition}>
+          <button className="btn btn-secondary btn-sm" onClick={addCondition} data-tooltip="Add another search condition">
             <Plus size={13} /> Add Condition
           </button>
-          <button className="btn btn-primary" onClick={runSearch}>
+          <button className="btn btn-primary" onClick={runSearch} data-tooltip="Run this search query">
             <Play size={13} /> Run Query
           </button>
           {results !== null && (
-            <button className="btn btn-ghost btn-sm" onClick={clearSearch}>
+            <button className="btn btn-ghost btn-sm" onClick={clearSearch} data-tooltip="Clear results and reset query">
               <X size={13} /> Clear
             </button>
           )}
@@ -205,6 +207,7 @@ export default function AdvancedSearch() {
             key={ex.label}
             className="filter-chip"
             onClick={() => { setConditions(ex.conditions); setConjunction(ex.conj); setResults(null); }}
+            data-tooltip={`Load the "${ex.label}" example query`}
           >
             {ex.label}
           </button>
@@ -236,6 +239,7 @@ export default function AdvancedSearch() {
                   onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
                   onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-subtle)')}
                   onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
+                  data-tooltip="Open this bug's details"
                 >
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-primary)', flexShrink: 0 }}>{bug.id}</span>
                   <span style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bug.title}</span>

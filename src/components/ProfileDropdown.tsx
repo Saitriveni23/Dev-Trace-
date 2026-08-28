@@ -73,10 +73,12 @@ export default function ProfileDropdown() {
   // If not logged in, show "Continue with Google"
   if (!user) {
     return (
-      <button 
-        onClick={handleGoogleLogin} 
+      <button
+        onClick={handleGoogleLogin}
         disabled={isLoggingIn}
         className="navbar-btn navbar-btn-primary"
+        data-tooltip="Sign in with your Google account"
+        data-tooltip-pos="bottom"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -113,7 +115,7 @@ export default function ProfileDropdown() {
     <div className="profile-dropdown-container" ref={dropdownRef} style={{ position: 'relative', display: 'inline-block' }}>
       
       {/* Profile/Avatar Button in Navbar */}
-      <div 
+      <div
         onClick={() => setIsOpen(!isOpen)}
         style={{
           display: 'flex',
@@ -130,6 +132,10 @@ export default function ProfileDropdown() {
           transition: 'transform 0.2s ease'
         }}
         className="profile-navbar-trigger"
+        data-tooltip="Open your profile menu"
+        data-tooltip-pos="bottom"
+        role="button"
+        tabIndex={0}
       >
         {/* Profile Avatar Frame with online indicator */}
         <div style={{ position: 'relative', width: '28px', height: '28px' }}>
@@ -222,46 +228,56 @@ export default function ProfileDropdown() {
 
             {/* Menu Items links */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <div 
+              <div
                 className="dropdown-menu-item"
                 onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'dashboard' }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
+                data-tooltip="Go to your metrics dashboard"
+                data-tooltip-pos="left"
               >
                 <Compass size={14} />
                 <span>My Workspace</span>
               </div>
 
-              <div 
+              <div
                 className="dropdown-menu-item"
                 onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'list' }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
+                data-tooltip="See the bugs assigned to you"
+                data-tooltip-pos="left"
               >
                 <FolderGit size={14} />
                 <span>Assigned Bugs</span>
               </div>
 
-              <div 
+              <div
                 className="dropdown-menu-item"
                 onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'sprint' }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
+                data-tooltip="View the sprint planner and activity timeline"
+                data-tooltip-pos="left"
               >
                 <Activity size={14} />
                 <span>Activity Timeline</span>
               </div>
 
-              <div 
+              <div
                 className="dropdown-menu-item"
                 onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'assistant' }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
+                data-tooltip="Open the AI assistant view"
+                data-tooltip-pos="left"
               >
                 <Settings size={14} />
                 <span>Settings</span>
               </div>
 
-              <div 
+              <div
                 className="dropdown-menu-item"
                 onClick={handleThemeToggle}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
+                data-tooltip="Switch between light and dark notebook covers"
+                data-tooltip-pos="left"
               >
                 <Sun size={14} />
                 <span>Theme Toggle</span>
@@ -271,10 +287,12 @@ export default function ProfileDropdown() {
               <div style={{ height: '2px', borderBottom: '2px dashed rgba(0,0,0,0.15)', margin: '8px 0' }} />
 
               {/* Logout button (turns into a red paper strip on hover) */}
-              <div 
+              <div
                 className="dropdown-logout-strip"
                 onClick={handleLogout}
-                style={{ 
+                data-tooltip="Sign out of your DevTrace session"
+                data-tooltip-pos="left"
+                style={{
                   display: 'flex', 
                   alignItems: 'center', 
                   gap: '8px', 

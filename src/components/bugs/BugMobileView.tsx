@@ -95,6 +95,7 @@ export default function BugMobileView() {
               { id: 'MC-3', title: 'CSS float leakage on grid layouts', severity: 'MINOR', noteColor: 'note-purple', swipeDir: null },
               { id: 'MC-4', title: 'Database connection pool timeout loop', severity: 'CRITICAL', noteColor: 'note-blue', swipeDir: null },
             ])}
+            data-tooltip="Reload the demo bug cards"
             style={{ marginTop: '20px', transform: 'rotate(-2deg)' }}
           >
             Refill Sticky Deck 📝
@@ -185,17 +186,17 @@ export default function BugMobileView() {
 
                         {/* Interactive swipe buttons on mobile preview cards */}
                         <div style={{ display: 'flex', gap: '8px', width: '100%', borderTop: '1px dashed rgba(0,0,0,0.1)', paddingTop: '6px', justifyContent: 'flex-end' }}>
-                          <button 
+                          <button
                             onClick={(e) => { e.stopPropagation(); handleSwipe(card.id, 'left'); }}
                             style={{ background: 'transparent', border: 'none', color: 'var(--accent-coral)', cursor: 'pointer', padding: '2px' }}
-                            title="Swipe Backlog"
+                            data-tooltip="Swipe this card back to backlog"
                           >
                             <Trash size={13} />
                           </button>
-                          <button 
+                          <button
                             onClick={(e) => { e.stopPropagation(); handleSwipe(card.id, 'right'); }}
                             style={{ background: 'transparent', border: 'none', color: 'var(--accent-mint)', cursor: 'pointer', padding: '2px' }}
-                            title="Swipe Done"
+                            data-tooltip="Mark this card resolved and remove it"
                           >
                             <Check size={13} strokeWidth={3} />
                           </button>
@@ -302,6 +303,8 @@ export default function BugMobileView() {
                   setShowAIBalloon(!showAIBalloon);
                   confetti({ particleCount: 20, spread: 20 });
                 }}
+                data-tooltip={showAIBalloon ? 'Hide BugBot tip' : 'Show BugBot tip'}
+                data-tooltip-pos="left"
                 style={{
                   width: '38px',
                   height: '38px',
@@ -335,8 +338,9 @@ export default function BugMobileView() {
             }}
           >
             {/* Tab 1: List */}
-            <div 
+            <div
               onClick={() => setActiveMobileTab('list')}
+              data-tooltip="Switch to the notes list view"
               style={{
                 fontFamily: 'var(--font-hand)',
                 fontSize: '0.95rem',
@@ -356,8 +360,9 @@ export default function BugMobileView() {
             </div>
 
             {/* Tab 2: Kanban */}
-            <div 
+            <div
               onClick={() => setActiveMobileTab('kanban')}
+              data-tooltip="Switch to the cork board view"
               style={{
                 fontFamily: 'var(--font-hand)',
                 fontSize: '0.95rem',
@@ -377,8 +382,9 @@ export default function BugMobileView() {
             </div>
 
             {/* Tab 3: Analytics */}
-            <div 
+            <div
               onClick={() => setActiveMobileTab('analytics')}
+              data-tooltip="Switch to the weather & metrics view"
               style={{
                 fontFamily: 'var(--font-hand)',
                 fontSize: '0.95rem',

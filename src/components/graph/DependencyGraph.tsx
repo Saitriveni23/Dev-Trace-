@@ -142,13 +142,13 @@ export default function DependencyGraph() {
         </div>
         <span className="view-count">{nodes.length} nodes · {edges.length} edges</span>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-          <button className="btn btn-secondary btn-sm" onClick={() => setZoom(z => Math.min(2.5, z + 0.15))}>
+          <button className="btn btn-secondary btn-sm" onClick={() => setZoom(z => Math.min(2.5, z + 0.15))} data-tooltip="Zoom in" data-tooltip-pos="bottom">
             <ZoomIn size={13} />
           </button>
-          <button className="btn btn-secondary btn-sm" onClick={() => setZoom(z => Math.max(0.3, z - 0.15))}>
+          <button className="btn btn-secondary btn-sm" onClick={() => setZoom(z => Math.max(0.3, z - 0.15))} data-tooltip="Zoom out" data-tooltip-pos="bottom">
             <ZoomOut size={13} />
           </button>
-          <button className="btn btn-secondary btn-sm" onClick={resetView}>
+          <button className="btn btn-secondary btn-sm" onClick={resetView} data-tooltip="Reset zoom and pan" data-tooltip-pos="bottom">
             <RotateCcw size={13} /> Reset
           </button>
         </div>
@@ -256,6 +256,7 @@ export default function DependencyGraph() {
                     onMouseEnter={() => setHoveredId(bug.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
+                    data-tooltip={`Open ${bug.id} details`}
                   >
                     {/* Shadow */}
                     <rect

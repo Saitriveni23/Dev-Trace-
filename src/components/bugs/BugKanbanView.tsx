@@ -157,7 +157,9 @@ export default function BugKanbanView() {
                       <div
                         className={`kanban-card ${col.noteClass}`}
                         onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
-                        style={{ 
+                        data-tooltip="Open this case's full dossier"
+                        data-tooltip-pos="bottom"
+                        style={{
                           transform: `rotate(${angle}deg)`,
                           border: '2px solid var(--text-dark)',
                           borderRadius: '2px',

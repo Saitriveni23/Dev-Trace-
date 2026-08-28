@@ -166,18 +166,21 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
             CASE #{bug.id}: {bug.title}
           </span>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button 
-              className="navbar-icon-btn print-doodle-btn" 
+            <button
+              className="navbar-icon-btn print-doodle-btn"
               onClick={() => window.print()}
               style={{ background: 'var(--text-dark)', color: 'white', border: '2px solid white', borderRadius: '50%', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              title="Print Case Dossier"
+              data-tooltip="Print this case dossier"
+              data-tooltip-pos="bottom"
             >
               <Printer size={13} strokeWidth={2.5} />
             </button>
-            <button 
-              className="modal-close-doodle" 
+            <button
+              className="modal-close-doodle"
               onClick={onClose}
               style={{ background: 'var(--text-dark)', color: 'white', border: '2px solid white', borderRadius: '50%', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              data-tooltip="Close this case dossier"
+              data-tooltip-pos="bottom"
             >
               <X size={13} strokeWidth={3} />
             </button>
@@ -226,10 +229,11 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {reproSteps.map(step => (
-                  <div 
-                    key={step.id} 
+                  <div
+                    key={step.id}
                     onClick={() => toggleReproStep(step.id)}
-                    style={{ 
+                    data-tooltip={step.done ? 'Mark this step as not reproduced' : 'Mark this step as reproduced'}
+                    style={{
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '8px', 
@@ -282,8 +286,9 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                 })}
 
                 {/* Upload attachment Polaroids card */}
-                <div 
+                <div
                   onClick={() => document.getElementById('screenshot-file-picker')?.click()}
+                  data-tooltip="Upload a screenshot as evidence"
                   style={{
                     background: 'rgba(0,0,0,0.02)',
                     border: '2px dashed rgba(0,0,0,0.15)',
@@ -472,10 +477,11 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                     outline: 'none'
                   }}
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary btn-sm"
                   style={{ border: '2px solid var(--text-dark)', padding: '6px 12px' }}
+                  data-tooltip="Post this comment to the case"
                 >
                   Pin Clue
                 </button>
@@ -492,6 +498,7 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                     className="btn btn-secondary btn-sm"
                     style={{ border: '1.5px solid var(--text-dark)', color: 'var(--text-dark)', fontWeight: 'bold' }}
                     onClick={() => handleStatusChange(s)}
+                    data-tooltip={`Change case status to ${s}`}
                   >
                     → {s}
                   </button>
