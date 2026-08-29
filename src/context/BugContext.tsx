@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import type { Bug, BugStatus, BugResolution, BugSeverity, BugPriority, BugFlag, BugComment, Product, SavedSearch, UserProfile, MetricSummary } from '../types';
 import { INITIAL_BUGS, PRODUCTS, INITIAL_SAVED_SEARCHES, CURRENT_USER, USERS } from '../services/seedData';
+import { db } from '../firebase';
+import { collection, onSnapshot, doc, setDoc } from 'firebase/firestore';
 
 interface BugState {
   bugs: Bug[];
@@ -32,10 +34,13 @@ type BugAction =
   | { type: 'UPDATE_BUG_FLAG'; payload: { bugId: string; flag: BugFlag } }
   | { type: 'ADD_COMMENT'; payload: { bugId: string; comment: BugComment } }
   | { type: 'ADD_TOAST'; payload: { message: string; type: 'success' | 'error' | 'info' | 'warning' } }
-  | { type: 'REMOVE_TOAST'; payload: string };
+  | { type: 'REMOVE_TOAST'; payload: string }
+  | { type: 'SYNC_BUGS'; payload: Bug[] };
 
 function bugReducer(state: BugState, action: BugAction): BugState {
   switch (action.type) {
+    case 'SYNC_BUGS':
+      return { ...state, bugs: action.payload };
     case 'SET_VIEW':
       return { ...state, activeView: action.payload, selectedBugId: null };
     case 'SELECT_BUG':
@@ -150,7 +155,101 @@ interface BugContextType extends BugState {
 const BugContext = createContext<BugContextType | null>(null);
 
 export function BugProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(bugReducer, initialState);
+  const [state, localDispatch] = useReducer(bugReducer, initialState);
+
+  // Real-time synchronization subscription with offline fallback
+  useEffect(() => {
+    try {
+      const unsubscribe = onSnapshot(collection(db, 'bugs'), (snapshot) => {
+        if (snapshot.empty) {
+          // Seed database on first clean run
+          INITIAL_BUGS.forEach(async (bug) => {
+            await setDoc(doc(db, 'bugs', bug.id), bug);
+          });
+        } else {
+          const firebaseBugs: Bug[] = [];
+          snapshot.forEach((doc) => {
+            firebaseBugs.push(doc.data() as Bug);
+          });
+          // Sort by date to maintain consistent UI sorting (newest first)
+          firebaseBugs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          localDispatch({ type: 'SYNC_BUGS', payload: firebaseBugs });
+        }
+      }, (err) => {
+        console.warn('Firestore subscription read error, continuing with local state fallback:', err);
+      });
+      return () => unsubscribe();
+    } catch (e) {
+      console.warn('Firestore database initialization failed:', e);
+    }
+  }, []);
+
+  const dispatch = useCallback((action: BugAction) => {
+    // Perform optimistic UI state updates locally
+    localDispatch(action);
+
+    // Synchronize to Firestore collection asynchronously
+    const syncToFirestore = async () => {
+      try {
+        if (action.type === 'CREATE_BUG') {
+          await setDoc(doc(db, 'bugs', action.payload.id), action.payload);
+        } else if (action.type === 'UPDATE_BUG') {
+          await setDoc(doc(db, 'bugs', action.payload.id), action.payload);
+        } else if (action.type === 'UPDATE_BUG_STATUS') {
+          const bug = state.bugs.find(b => b.id === action.payload.id);
+          if (bug) {
+            const now = new Date().toISOString();
+            const updatedBug: Bug = {
+              ...bug,
+              status: action.payload.status,
+              resolution: action.payload.resolution ?? bug.resolution,
+              updatedAt: now,
+              resolvedAt: ['RESOLVED', 'CLOSED', 'VERIFIED'].includes(action.payload.status) ? now : bug.resolvedAt,
+              auditLog: [
+                {
+                  id: `aud-${Date.now()}`,
+                  timestamp: now,
+                  user: state.currentUser.username,
+                  field: 'Status',
+                  oldValue: bug.status,
+                  newValue: action.payload.status,
+                },
+                ...bug.auditLog
+              ]
+            };
+            await setDoc(doc(db, 'bugs', action.payload.id), updatedBug);
+          }
+        } else if (action.type === 'UPDATE_BUG_FLAG') {
+          const bug = state.bugs.find(b => b.id === action.payload.bugId);
+          if (bug) {
+            const flags = bug.flags.some(f => f.id === action.payload.flag.id)
+              ? bug.flags.map(f => f.id === action.payload.flag.id ? action.payload.flag : f)
+              : [...bug.flags, action.payload.flag];
+            const updatedBug: Bug = {
+              ...bug,
+              flags,
+              updatedAt: new Date().toISOString()
+            };
+            await setDoc(doc(db, 'bugs', action.payload.bugId), updatedBug);
+          }
+        } else if (action.type === 'ADD_COMMENT') {
+          const bug = state.bugs.find(b => b.id === action.payload.bugId);
+          if (bug) {
+            const updatedBug: Bug = {
+              ...bug,
+              comments: [...bug.comments, action.payload.comment],
+              updatedAt: new Date().toISOString()
+            };
+            await setDoc(doc(db, 'bugs', action.payload.bugId), updatedBug);
+          }
+        }
+      } catch (err) {
+        console.warn('Firestore write synchronization failed:', err);
+      }
+    };
+
+    syncToFirestore();
+  }, [state.bugs, state.currentUser.username]);
 
   const getFilteredBugs = useCallback((): Bug[] => {
     let result = state.bugs;

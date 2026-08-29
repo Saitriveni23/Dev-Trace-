@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   List, LayoutGrid, BarChart2, ShieldAlert, GitBranch,
   Search, Flame, HelpCircle, UserCheck, GitPullRequest, Star,
-  Atom, Database, ShieldCheck, Layers, Bug, Sparkles, Calendar, Smartphone, Palette, Users, Settings
+  Atom, Database, ShieldCheck, Layers, Bug, Sparkles, Calendar, Smartphone, Palette, Users, Settings,
+  Coffee, Radio, Volume2, VolumeX, Music
 } from 'lucide-react';
 import { useBugs } from '../../context/BugContext';
 
@@ -80,6 +81,108 @@ export default function Sidebar() {
   const metrics = getMetrics();
 
   const openCount = bugs.filter(b => !['CLOSED'].includes(b.status)).length;
+
+  // Desk Radio state
+  const [radioPlaying, setRadioPlaying] = useState(false);
+  const [radioMuted, setRadioMuted] = useState(false);
+  const [typewriterEnabled, setTypewriterEnabled] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Caffeine Tracker state
+  const [caffeineCount, setCaffeineCount] = useState(() => {
+    return Number(localStorage.getItem('devtrace_caffeine') || '0');
+  });
+
+  const handleCaffeineIncrement = () => {
+    const nextCount = caffeineCount + 1;
+    setCaffeineCount(nextCount);
+    localStorage.setItem('devtrace_caffeine', String(nextCount));
+  };
+
+  const handleCaffeineReset = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCaffeineCount(0);
+    localStorage.setItem('devtrace_caffeine', '0');
+  };
+
+  // Keyboard clicks audio synthesis on keystrokes
+  useEffect(() => {
+    if (!typewriterEnabled) return;
+
+    const playKeyClickSound = () => {
+      try {
+        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const bufferSize = audioCtx.sampleRate * 0.015; // 15ms short click
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+        
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime); // very quiet click
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.015);
+        
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.start();
+      } catch (e) {
+        // Ignore audio contexts blocked or uninitialized
+      }
+    };
+
+    const handleKeyDown = () => {
+      playKeyClickSound();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [typewriterEnabled]);
+
+  // Radio Audio playback management
+  useEffect(() => {
+    if (radioPlaying) {
+      if (!audioRef.current) {
+        // Steady royalty-free instrumental track
+        audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+        audioRef.current.loop = true;
+      }
+      audioRef.current.muted = radioMuted;
+      audioRef.current.play().catch(err => {
+        console.warn('Playback blocked by browser auto-play policy:', err);
+        setRadioPlaying(false);
+      });
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    }
+  }, [radioPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = radioMuted;
+    }
+  }, [radioMuted]);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   const views = [
     { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null, tooltip: 'See key bug metrics and stats at a glance' },
@@ -205,6 +308,132 @@ export default function Sidebar() {
           </div>
         );
       })}
+      
+      <div className="sidebar-divider" />
+
+      {/* Retro Desk Radio Widget */}
+      <div style={{
+        margin: '12px 14px',
+        padding: '12px 14px',
+        background: '#181A20',
+        border: '2px solid var(--text-dark)',
+        borderRadius: '6px',
+        boxShadow: '3px 3px 0px rgba(0,0,0,0.95)',
+        transform: 'rotate(-0.8deg)',
+        color: '#FFFFFF'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <Radio size={14} style={{ color: radioPlaying ? 'var(--accent-yellow)' : 'var(--text-muted)' }} />
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.72rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Precinct Dispatch Radio
+          </span>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between' }}>
+          <button
+            onClick={() => setRadioPlaying(!radioPlaying)}
+            style={{
+              background: radioPlaying ? 'var(--accent-yellow)' : 'transparent',
+              color: radioPlaying ? 'var(--text-dark)' : '#FFFFFF',
+              border: '1.5px solid var(--text-dark)',
+              borderRadius: '4px',
+              padding: '4px 10px',
+              fontSize: '0.68rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+          >
+            {radioPlaying ? 'STOP BEATS' : 'PLAY BEATS'}
+          </button>
+          
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <button
+              onClick={() => setRadioMuted(!radioMuted)}
+              data-tooltip={radioMuted ? 'Unmute radio' : 'Mute radio'}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: radioMuted ? 'var(--accent-coral)' : 'var(--text-muted)',
+                cursor: 'pointer',
+                padding: '2px'
+              }}
+            >
+              {radioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            </button>
+            <button
+              onClick={() => setTypewriterEnabled(!typewriterEnabled)}
+              data-tooltip="Toggle clicky mechanical keyboard keys"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: typewriterEnabled ? 'var(--accent-mint)' : 'var(--text-muted)',
+                cursor: 'pointer',
+                padding: '2px'
+              }}
+            >
+              <Music size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Caffeine Tracker Widget */}
+      <div 
+        onClick={handleCaffeineIncrement}
+        style={{
+          margin: '12px 14px 20px',
+          padding: '12px 14px',
+          background: 'var(--paper-yellow)',
+          color: 'var(--text-dark)',
+          border: '2px solid var(--text-dark)',
+          borderRadius: '6px',
+          boxShadow: '3px 3px 0px rgba(0,0,0,0.95)',
+          transform: 'rotate(0.5deg)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          position: 'relative',
+          userSelect: 'none'
+        }}
+      >
+        {/* Coffee level filled graphic */}
+        <div style={{ width: '28px', height: '28px', position: 'relative' }}>
+          <Coffee size={28} style={{ color: 'var(--text-dark)' }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '4px',
+            left: '5px',
+            width: '18px',
+            height: `${Math.min((caffeineCount % 5) * 4, 18)}px`,
+            background: '#5C3A21',
+            borderRadius: '1px',
+            opacity: 0.8,
+            transition: 'height 0.3s ease'
+          }} />
+        </div>
+        
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '0.62rem', fontWeight: 900, textTransform: 'uppercase', opacity: 0.6, letterSpacing: '0.04em' }}>
+            Inspector Fuel Levels
+          </span>
+          <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.1rem', fontWeight: 'bold' }}>
+            {caffeineCount === 0 ? 'Need coffee...' : `${caffeineCount} Cups Logged ☕`}
+          </span>
+        </div>
+        
+        {caffeineCount > 0 && (
+          <span 
+            onClick={handleCaffeineReset}
+            style={{ fontSize: '0.62rem', fontWeight: 900, textDecoration: 'underline', color: 'var(--accent-coral)' }}
+          >
+            RESET
+          </span>
+        )}
+      </div>
       
       {/* Detective Profile Card */}
       <DetectiveProfileCard />

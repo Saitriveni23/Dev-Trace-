@@ -4,7 +4,7 @@ import {
 } from 'firebase/auth';
 
 import { auth } from '../../firebase';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useBugs } from '../../context/BugContext';
 import { useAuth } from '../../hooks/useAuth';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
@@ -72,6 +72,48 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [isScanning, setIsScanning] = useState(false);
+  const scanIntervalRef = useRef<any>(null);
+
+  const startScanning = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      showToast('Scribe your credentials before scanning!', 'error');
+      return;
+    }
+    setIsScanning(true);
+    setScanProgress(0);
+
+    const startTime = Date.now();
+    scanIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(Math.round((elapsed / 1200) * 100), 100);
+      setScanProgress(progress);
+
+      if (progress >= 100) {
+        clearInterval(scanIntervalRef.current);
+        setIsScanning(false);
+        // Submit login!
+        const mockEvent = { preventDefault: () => {} } as React.FormEvent;
+        handleLoginSubmit(mockEvent);
+      }
+    }, 30);
+  };
+
+  const stopScanning = () => {
+    if (scanIntervalRef.current) {
+      clearInterval(scanIntervalRef.current);
+    }
+    setIsScanning(false);
+    setScanProgress(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
+    };
+  }, [email, password]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -422,7 +464,76 @@ export default function LoginPage() {
 
             </div>
 
-            {/* Let's Debug Button (Yellow Highlighter Sticky) */}
+            {/* Biometric Clearance Scanner */}
+            <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.08em', display: 'block', marginBottom: '8px' }}>
+                biometric inspector clearance
+              </span>
+              <div
+                onMouseDown={startScanning}
+                onMouseUp={stopScanning}
+                onMouseLeave={stopScanning}
+                onTouchStart={startScanning}
+                onTouchEnd={stopScanning}
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  background: '#0D1117',
+                  border: isScanning ? '3px solid var(--accent-mint)' : '3px solid var(--text-dark)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  userSelect: 'none',
+                  boxShadow: isScanning ? '0 0 15px rgba(52, 211, 153, 0.4)' : '4px 4px 0px rgba(0,0,0,0.95)',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                {/* Scan progress green filler */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  width: '100%',
+                  height: `${scanProgress}%`,
+                  background: 'rgba(52, 211, 153, 0.15)',
+                  transition: 'height 0.03s linear'
+                }} />
+
+                {/* Moving laser scanline */}
+                {isScanning && (
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '3px',
+                    background: 'var(--accent-mint)',
+                    boxShadow: '0 0 8px var(--accent-mint)',
+                    animation: 'laserScan 1.2s linear infinite',
+                    left: 0,
+                    zIndex: 5
+                  }} />
+                )}
+
+                {/* Fingerprint SVG */}
+                <svg viewBox="0 0 100 100" width="50" height="50" fill="none" stroke={isScanning ? 'var(--accent-mint)' : 'var(--text-muted)'} strokeWidth="3" strokeLinecap="round" style={{ transition: 'color 0.2s ease', zIndex: 2 }}>
+                  <path d="M 50 15 C 30 15 20 30 20 50 C 20 65 30 80 50 80 C 70 80 80 65 80 50" />
+                  <path d="M 50 25 C 38 25 30 35 30 50 C 30 60 38 70 50 70 C 62 70 70 60 70 50" />
+                  <path d="M 50 35 C 44 35 40 40 40 50 C 40 55 44 60 50 60 C 56 60 60 55 60 50" />
+                  <path d="M 50 45 A 5 5 0 0 0 50 55 A 5 5 0 0 0 50 45" />
+                </svg>
+
+                {/* Scanning status text */}
+                <span style={{ fontSize: '0.58rem', fontWeight: 900, marginTop: '6px', color: isScanning ? 'var(--accent-mint)' : 'var(--text-muted)', zIndex: 2, letterSpacing: '0.05em' }}>
+                  {isScanning ? `SCANNING ${scanProgress}%` : 'HOLD TO SCAN'}
+                </span>
+              </div>
+            </div>
+
+            {/* Traditional submit button as fallback */}
             <button
               type="submit"
               className="btn btn-primary"
@@ -432,18 +543,19 @@ export default function LoginPage() {
                 border: '2.5px solid var(--text-dark)',
                 boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
                 transform: 'rotate(-1.5deg)',
-                padding: '12px 24px',
-                fontSize: '1.25rem',
+                padding: '10px 20px',
+                fontSize: '1.15rem',
                 fontFamily: 'var(--font-hand)',
                 fontWeight: 'bold',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 justifyContent: 'center',
-                marginTop: '10px'
+                marginTop: '20px',
+                width: '100%'
               }}
             >
-              Let's Debug <ArrowRight size={18} />
+              Let's Debug <ArrowRight size={16} />
             </button>
 
           </form>

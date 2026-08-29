@@ -1,1 +1,1 @@
-export { auth, googleProvider, githubProvider } from './lib/firebase';
+export { auth, googleProvider, githubProvider, db, storage } from './lib/firebase';
