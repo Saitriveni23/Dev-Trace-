@@ -26,6 +26,23 @@
   --text-muted: #9CA3AF;       /* Muted Text */
   --text-dark: #111827;        /* Ink Black for writing on paper */
   
+  --bg-grid: rgba(255, 255, 255, 0.015);
+  --border-subtle: rgba(255,255,255,0.06);
+}
+
+body.light-notebook {
+  --bg-notebook: #F3F4F6;
+  --bg-surface: #FFFFFF;
+  --bg-secondary: #E5E7EB;
+  
+  --text-white: #111827;
+  --text-muted: #6B7280;
+  --text-dark: #111827;
+  
+  --bg-grid: rgba(0, 0, 0, 0.03);
+  --border-subtle: rgba(0,0,0,0.1);
+
+  
   /* Radii */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -58,8 +75,8 @@
 body {
   background-color: var(--bg-notebook);
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
   background-size: 30px 30px;
   color: var(--text-white);
   font-family: var(--font-sans);

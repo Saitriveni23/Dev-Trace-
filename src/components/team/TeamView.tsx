@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useBugs } from '../../context/BugContext';
 import { Plus, Wifi } from 'lucide-react';
 
-const TEAM_MEMBERS = [
+export const TEAM_MEMBERS = [
   {
     id: 'tm1',
     name: 'Triveni',

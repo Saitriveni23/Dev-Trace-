@@ -7,9 +7,10 @@ import {
 } from '../common/Badge';
 import {
   ChevronUp, ChevronDown, ArrowUpDown, Filter,
-  X, AlertTriangle, Users
+  X, AlertTriangle, Users, Download
 } from 'lucide-react';
 import BugDetailPanel from './BugDetailView';
+import { exportBugsToCSV } from '../../lib/exportUtils';
 
 const STATUS_ORDER: BugStatus[] = ['UNCONFIRMED', 'CONFIRMED', 'IN_PROGRESS', 'RESOLVED', 'VERIFIED', 'CLOSED'];
 const SEVERITIES: BugSeverity[] = ['BLOCKER', 'CRITICAL', 'MAJOR', 'NORMAL', 'MINOR', 'TRIVIAL', 'ENHANCEMENT'];
@@ -147,6 +148,9 @@ export default function BugListView() {
           <span className="view-count">{sortedBugs.length} notes</span>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => exportBugsToCSV(sortedBugs)} style={{ color: 'var(--text-muted)' }} data-tooltip="Export current list to CSV">
+            <Download size={13} /> Export
+          </button>
           {hasActiveFilters && (
             <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ color: 'var(--accent-coral)', fontSize: '0.78rem' }} data-tooltip="Clear all active filters and search">
               <X size={13} /> Wipe Filters

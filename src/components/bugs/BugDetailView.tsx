@@ -7,6 +7,8 @@ import confetti from 'canvas-confetti';
 import { storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+import { TEAM_MEMBERS } from '../team/TeamView';
+
 interface Props {
   bugId: string;
   onClose: () => void;
@@ -96,6 +98,21 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
     } else {
       showToast(`Status updated: ${newStatus}`, 'success');
     }
+  };
+
+  const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const assigneeName = e.target.value;
+    const member = TEAM_MEMBERS.find(m => m.name === assigneeName);
+    
+    dispatch({
+      type: 'UPDATE_BUG',
+      payload: {
+        ...bug,
+        assignee: assigneeName,
+        assigneeEmail: member ? `${member.name.toLowerCase()}@devtrace.app` : bug.assigneeEmail
+      }
+    });
+    showToast(`Case assigned to ${assigneeName}`, 'success');
   };
 
   const handleAddComment = (e: React.FormEvent) => {
@@ -443,7 +460,17 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                 />
               </div>
-              <div style={{ fontFamily: 'var(--font-marker)', fontSize: '1.25rem', color: 'var(--text-dark)' }}>{bug.assignee}</div>
+              
+              <select 
+                value={bug.assignee}
+                onChange={handleAssigneeChange}
+                style={{ fontFamily: 'var(--font-marker)', fontSize: '1.1rem', color: 'var(--text-dark)', background: 'transparent', border: '1px solid var(--text-dark)', borderRadius: '4px', textAlign: 'center', width: '100%', marginBottom: '4px' }}
+              >
+                {TEAM_MEMBERS.map(m => (
+                  <option key={m.id} value={m.name}>{m.name}</option>
+                ))}
+              </select>
+
               <div style={{ fontFamily: 'var(--font-hand)', fontSize: '1rem', color: 'rgba(0,0,0,0.5)', fontWeight: 'bold' }}>Lead Detective</div>
             </div>
 

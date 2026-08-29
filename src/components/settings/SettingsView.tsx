@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Bell, Moon, Sun, BookOpen, Code, Database } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, Moon, Sun, BookOpen, Code, Database, User, Save } from 'lucide-react';
+import { useBugs } from '../../context/BugContext';
 
 const GithubIcon = ({ size = 18 }: { size?: number }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -28,7 +29,13 @@ const INTEGRATIONS = [
 ];
 
 export default function SettingsView() {
-  const [theme, setTheme] = useState<'dark' | 'notebook' | 'light'>('dark');
+  const { currentUser, dispatch, showToast } = useBugs();
+  const [profileName, setProfileName] = useState(currentUser.name);
+  const [profileRole, setProfileRole] = useState(currentUser.role);
+  
+  const [theme, setTheme] = useState<'dark' | 'notebook' | 'light'>(() => {
+    return (localStorage.getItem('devtrace_theme') as any) || 'dark';
+  });
   const [notifications, setNotifications] = useState({
     criticalBugs: true,
     sprintUpdates: true,
@@ -40,21 +47,35 @@ export default function SettingsView() {
     INTEGRATIONS.reduce((acc, i) => ({ ...acc, [i.id]: i.connected }), {})
   );
 
+  useEffect(() => {
+    localStorage.setItem('devtrace_theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('light-notebook');
+    } else {
+      document.body.classList.remove('light-notebook');
+    }
+  }, [theme]);
+
   const toggleNotif = (key: keyof typeof notifications) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSaveProfile = () => {
+    dispatch({ type: 'UPDATE_USER', payload: { ...currentUser, name: profileName, role: profileRole as any } });
+    showToast('Profile preferences updated', 'success');
   };
 
   return (
     <div style={{
       padding: '32px 36px',
-      background: '#080A12',
+      background: 'var(--bg-notebook)',
       minHeight: '100%',
       backgroundImage: `
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)
+        linear-gradient(var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px)
       `,
       backgroundSize: '28px 28px',
-      color: '#FFFFFF'
+      color: 'var(--text-white)'
     }}>
 
       {/* Header */}
@@ -64,16 +85,16 @@ export default function SettingsView() {
           fontFamily: 'var(--font-sans)',
           fontSize: '2.4rem',
           fontWeight: 900,
-          color: '#FFFFFF',
+          color: 'var(--text-white)',
           margin: 0,
           letterSpacing: '-0.02em'
         }}>
-          Case <span style={{ color: '#FBBF24' }}>Preferences</span>
+          Case <span style={{ color: 'var(--accent-yellow)' }}>Preferences</span>
         </h1>
         <p style={{
           fontFamily: 'var(--font-hand)',
           fontSize: '1.1rem',
-          color: '#9CA3AF',
+          color: 'var(--text-muted)',
           margin: '4px 0 0',
           transform: 'rotate(-0.5deg)',
           display: 'inline-block'
@@ -84,10 +105,73 @@ export default function SettingsView() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px', maxWidth: '960px' }}>
 
+        {/* USER PROFILE SECTION */}
+        <div style={{
+          gridColumn: '1 / -1',
+          background: 'var(--bg-surface)',
+          border: '2.5px solid var(--bg-secondary)',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
+          position: 'relative'
+        }}>
+          <div className="tape-strip" style={{ width: '50px', top: '-8px', left: '50%', transform: 'translateX(-50%)' }} />
+          <h2 style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: '1rem',
+            fontWeight: 800,
+            color: 'var(--accent-yellow)',
+            margin: '0 0 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <User size={15} /> Detective Profile
+          </h2>
+
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '3px solid var(--text-dark)', overflow: 'hidden', background: 'var(--paper-beige)' }}>
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.email}`} alt="avatar" style={{ width: '100%', height: '100%' }} />
+            </div>
+            
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Display Name</label>
+                  <input 
+                    value={profileName} 
+                    onChange={e => setProfileName(e.target.value)}
+                    style={{ width: '100%', padding: '8px', border: '2px solid var(--text-dark)', borderRadius: '4px', background: 'transparent', color: 'var(--text-white)', fontFamily: 'var(--font-sans)' }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Role</label>
+                  <select 
+                    value={profileRole}
+                    onChange={e => setProfileRole(e.target.value as any)}
+                    style={{ width: '100%', padding: '8px', border: '2px solid var(--text-dark)', borderRadius: '4px', background: 'transparent', color: 'var(--text-white)', fontFamily: 'var(--font-sans)' }}
+                  >
+                    <option value="Admin">Admin</option>
+                    <option value="Lead Detective">Lead Detective</option>
+                    <option value="Security Officer">Security Officer</option>
+                    <option value="Contributor">Contributor</option>
+                  </select>
+                </div>
+              </div>
+              <button 
+                onClick={handleSaveProfile}
+                style={{ alignSelf: 'flex-start', background: 'var(--accent-yellow)', color: 'var(--text-dark)', border: '2px solid var(--text-dark)', padding: '6px 16px', borderRadius: '4px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '2px 2px 0px rgba(0,0,0,0.9)' }}
+              >
+                <Save size={14} /> Update Profile
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* THEME SECTION */}
         <div style={{
-          background: '#111827',
-          border: '2.5px solid #1A2233',
+          background: 'var(--bg-surface)',
+          border: '2.5px solid var(--bg-secondary)',
           borderRadius: '8px',
           padding: '24px',
           boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
@@ -98,7 +182,7 @@ export default function SettingsView() {
             fontFamily: 'var(--font-sans)',
             fontSize: '1rem',
             fontWeight: 800,
-            color: '#FBBF24',
+            color: 'var(--accent-yellow)',
             margin: '0 0 18px',
             display: 'flex',
             alignItems: 'center',
@@ -120,9 +204,9 @@ export default function SettingsView() {
                 style={{
                   flex: 1,
                   padding: '10px 6px',
-                  background: theme === t.id ? '#FBBF24' : '#1A2233',
-                  color: theme === t.id ? '#111827' : '#9CA3AF',
-                  border: `2px solid ${theme === t.id ? '#111827' : 'rgba(255,255,255,0.06)'}`,
+                  background: theme === t.id ? 'var(--accent-yellow)' : 'var(--bg-secondary)',
+                  color: theme === t.id ? 'var(--text-dark)' : 'var(--text-muted)',
+                  border: `2px solid ${theme === t.id ? 'var(--text-dark)' : 'var(--border-subtle)'}`,
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontWeight: 700,
@@ -145,8 +229,8 @@ export default function SettingsView() {
 
         {/* NOTIFICATIONS SECTION */}
         <div style={{
-          background: '#111827',
-          border: '2.5px solid #1A2233',
+          background: 'var(--bg-surface)',
+          border: '2.5px solid var(--bg-secondary)',
           borderRadius: '8px',
           padding: '24px',
           boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
@@ -157,7 +241,7 @@ export default function SettingsView() {
             fontFamily: 'var(--font-sans)',
             fontSize: '1rem',
             fontWeight: 800,
-            color: '#FBBF24',
+            color: 'var(--accent-yellow)',
             margin: '0 0 18px',
             display: 'flex',
             alignItems: 'center',
@@ -186,7 +270,7 @@ export default function SettingsView() {
                     paddingBottom: '10px'
                   }}
                 >
-                  <span style={{ fontSize: '0.84rem', color: '#D1D5DB' }}>{labels[key]}</span>
+                  <span style={{ fontSize: '0.84rem', color: 'var(--text-white)' }}>{labels[key]}</span>
                   <div
                     onClick={() => toggleNotif(key as any)}
                     data-tooltip={val ? `Turn off ${labels[key].replace(/^\S+\s/, '').toLowerCase()}` : `Turn on ${labels[key].replace(/^\S+\s/, '').toLowerCase()}`}
@@ -194,8 +278,8 @@ export default function SettingsView() {
                       width: '38px',
                       height: '20px',
                       borderRadius: '10px',
-                      background: val ? '#FBBF24' : '#1A2233',
-                      border: `1.5px solid ${val ? '#111827' : 'rgba(255,255,255,0.1)'}`,
+                      background: val ? 'var(--accent-yellow)' : 'var(--bg-secondary)',
+                      border: `1.5px solid ${val ? 'var(--text-dark)' : 'var(--border-subtle)'}`,
                       cursor: 'pointer',
                       position: 'relative',
                       transition: 'background 0.2s'
@@ -206,7 +290,7 @@ export default function SettingsView() {
                       width: '14px',
                       height: '14px',
                       borderRadius: '50%',
-                      background: '#FFFFFF',
+                      background: 'var(--paper-beige)',
                       top: '2px',
                       left: val ? '20px' : '2px',
                       transition: 'left 0.2s',
@@ -222,8 +306,8 @@ export default function SettingsView() {
         {/* INTEGRATIONS SECTION — spans both columns */}
         <div style={{
           gridColumn: '1 / -1',
-          background: '#111827',
-          border: '2.5px solid #1A2233',
+          background: 'var(--bg-surface)',
+          border: '2.5px solid var(--bg-secondary)',
           borderRadius: '8px',
           padding: '24px',
           boxShadow: '4px 4px 0px rgba(0,0,0,0.95)',
@@ -234,7 +318,7 @@ export default function SettingsView() {
             fontFamily: 'var(--font-sans)',
             fontSize: '1rem',
             fontWeight: 800,
-            color: '#FBBF24',
+            color: 'var(--accent-yellow)',
             margin: '0 0 20px'
           }}>
             🔌 Integration Stickers
@@ -245,8 +329,8 @@ export default function SettingsView() {
               <div
                 key={intg.id}
                 style={{
-                  background: '#1A2233',
-                  border: `2px solid ${integrations[intg.id] ? '#34D399' : 'rgba(255,255,255,0.06)'}`,
+                  background: 'var(--bg-secondary)',
+                  border: `2px solid ${integrations[intg.id] ? 'var(--accent-mint)' : 'var(--border-subtle)'}`,
                   borderRadius: '8px',
                   padding: '16px',
                   textAlign: 'center',

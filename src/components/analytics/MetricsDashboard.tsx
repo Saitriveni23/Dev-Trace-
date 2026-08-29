@@ -198,6 +198,16 @@ export default function MetricsDashboard() {
   const [museumIndex, setMuseumIndex] = useState(0);
   const [howToOpen, setHowToOpen] = useState(true);
 
+  // Derive dynamic activity feed
+  const recentActivities = [...bugs]
+    .flatMap(b => b.auditLog.map(log => ({ bugId: b.id, log })))
+    .sort((a, b) => new Date(b.log.timestamp).getTime() - new Date(a.log.timestamp).getTime())
+    .slice(0, 4);
+
+  const formatActivityTime = (iso: string) => {
+    return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  };
+
   // Ambient sound state toggles
   const [isLofi, setIsLofi] = useState(false);
   const [isRain, setIsRain] = useState(false);
@@ -501,8 +511,12 @@ export default function MetricsDashboard() {
           <div style={{ borderTop: '1.5px dashed rgba(255,255,255,0.1)', paddingTop: '10px' }}>
             <div style={{ fontSize: '0.62rem', fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>recent activity timeline</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', opacity: 0.8 }}>
-              <div>[10:45 AM] closed BS-108 scroll failure</div>
-              <div>[09:12 AM] filed BS-114 connection blockages</div>
+              {recentActivities.map((act, idx) => (
+                <div key={idx} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  [{formatActivityTime(act.log.timestamp)}] {act.log.user} updated {act.bugId}
+                </div>
+              ))}
+              {recentActivities.length === 0 && <div>No recent activity</div>}
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { useBugs } from '../../context/BugContext';
 import type { Bug, BugSeverity, BugPriority, OperatingSystem, Architecture } from '../../types';
 import { X, Plus, AlertTriangle, Mic, Image, Sparkles, FolderOpen, Tag } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { TEAM_MEMBERS } from '../team/TeamView';
 
 interface Props { onClose: () => void; }
 
@@ -62,6 +63,7 @@ export default function NewBugModal({ onClose }: Props) {
   const [description, setDescription] = useState('');
   const [product, setProduct] = useState(products[0]?.name ?? '');
   const [component, setComponent] = useState('');
+  const [assignee, setAssignee] = useState(currentUser.name);
   const [severityIndex, setSeverityIndex] = useState(3); // Normal
   const [priority, setPriority] = useState<BugPriority>('P3');
   const [os, setOs] = useState<OperatingSystem>('All');
@@ -140,8 +142,8 @@ export default function NewBugModal({ onClose }: Props) {
       priority,
       reporter: currentUser.name,
       reporterEmail: currentUser.email,
-      assignee: currentUser.name,
-      assigneeEmail: currentUser.email,
+      assignee: assignee,
+      assigneeEmail: currentUser.email, // mocked
       ccList: [],
       os,
       architecture: arch,
@@ -449,6 +451,20 @@ export default function NewBugModal({ onClose }: Props) {
                     onChange={e => setDescription(e.target.value)}
                     rows={6}
                   />
+                </div>
+
+                <div className="form-group-ruled">
+                  <label className="form-label-ruled">Assign Detective</label>
+                  <select
+                    className="form-select-ruled"
+                    value={assignee}
+                    onChange={e => setAssignee(e.target.value)}
+                    style={{ border: '2px solid var(--text-dark)', padding: '8px', background: 'transparent' }}
+                  >
+                    {TEAM_MEMBERS.map(m => (
+                      <option key={m.id} value={m.name}>{m.name} ({m.role})</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Duplicate Bugs Pinned Notes */}

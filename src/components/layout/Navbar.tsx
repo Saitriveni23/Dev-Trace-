@@ -50,7 +50,7 @@ const BugMascot = () => (
 );
 
 export default function Navbar() {
-  const { searchQuery, dispatch, currentUser } = useBugs();
+  const { searchQuery, dispatch, currentUser, showToast } = useBugs();
   const [showNewBug, setShowNewBug] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -120,6 +120,7 @@ export default function Navbar() {
 
           <button
             className="navbar-icon-btn"
+            onClick={() => setShowPalette(true)}
             data-tooltip="Notebook command line (open the full command palette with ⌘K / Ctrl+K)"
             data-tooltip-pos="bottom"
             aria-label="Command line"
@@ -131,6 +132,7 @@ export default function Navbar() {
             <div className="paper-clip-decoration" />
             <button
               className="navbar-icon-btn"
+              onClick={() => showToast('No new notifications yet! 🕵️‍♂️', 'info')}
               data-tooltip="View alerts and notifications"
               data-tooltip-pos="bottom"
               aria-label="Notifications"

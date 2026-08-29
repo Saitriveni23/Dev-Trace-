@@ -1,32 +1,59 @@
-# React + TypeScript + Vite
+# DevTrace 📓
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**DevTrace** is a modern, gamified, and heavily stylized reimagining of legacy bug trackers (inspired by Bugzilla). We deconstructed the core developer workflows—filing bugs, triaging, collaborating, and tracking progress—and reconstructed them into an environment that developers *actually want to use*. 
 
-Currently, two official plugins are available:
+Say goodbye to enterprise grey and endless form fields. Say hello to a **Developer Notebook** aesthetic, where bugs are "cases," evidence is pinned with masking tape, and resolving issues fires off victory confetti! 🎉
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 💡 The Mission: Track 2 - Bugzilla Reconstruction
 
-## React Compiler
+The goal of this project was to tackle **Track 2: Developer Tool Reconstruction – Bugzilla**. 
+Instead of merely reskinning Bugzilla, DevTrace rethinks the user experience from the ground up:
+- **Deconstruct the legacy tool**: We extracted the essential DNA of Bugzilla (Statuses, Severities, Priorities, Attachments, Comments, Audit Logs, and Dependencies).
+- **Extract core workflows**: Developers need to rapidly enter logs, drop screenshots, assign teammates, and view the burn-down without friction.
+- **Reconstruct a modern experience**: Built with a sleek React SPA architecture, using intuitive visual cues (sticky notes, washi tape tags, polaroid attachments) rather than sterile tables.
+- **Innovate beyond the reference**:
+  - 🎨 **Playful Aesthetic**: A hand-drawn, notebook-style interface that makes bug tracking feel like solving a detective case.
+  - 🌙 **Dual Modes**: Both Dark and Light notebook covers (themes).
+  - 🔊 **Ambient Flow State**: Built-in Lofi beats, rain simulators, and mechanical keyboard ASMR to keep developers in the zone right from their dashboard.
+  - 🤖 **AI Clue Insights**: Mocked AI integrations that analyze stack traces to propose root causes instantly.
+  - 📊 **Dynamic CSV Exports**: Easily export bug lists to CSV for external reporting.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Core Features
 
-## Expanding the Oxlint configuration
+1. **Bug Dossiers (The Issue Detail View)**
+   - View bugs as interactive "case folders" complete with red-thread connected cases, printed masking tape, and severity stickers.
+   - Drop screenshots that instantly render as pinned Polaroid photos.
+   - Interactive evidence reproduction checklists.
+2. **Interactive Triage (The Bug List)**
+   - Filter by severity, status, and product using a fast, client-side data layer.
+   - Export your current filtered list instantly to CSV.
+3. **The Detective Dashboard**
+   - Live **Activity Feed** tracking the team's audit logs.
+   - Bug Heatmaps, Kanban previews, and Sprint Burndown charts.
+   - Developer Mood tracking and a caffeine meter.
+4. **Team Collaboration**
+   - Dispatch Memos (Threaded Comments) that look like sticky notes.
+   - Reassign bugs instantly via the Lead Detective dropdown.
+   - Customizable User Profiles.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 🛠️ Technology Stack
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+- **Core**: React 18, TypeScript, Vite
+- **Styling**: Vanilla CSS (`index.css`) with heavy use of CSS variables for theming, custom fonts (Inter, Permanent Marker, Caveat, Fira Code), and glassmorphism/paper-morphism elements.
+- **Icons**: Lucide React
+- **Extras**: `canvas-confetti` for dopamine hits when closing bugs.
+
+## 🚀 Running Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Visit `http://localhost:5173` to start investigating glitches!
+
+---
+*Built for the Developer Tool Reconstruction Challenge.*

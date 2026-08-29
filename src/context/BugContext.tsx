@@ -35,10 +35,13 @@ type BugAction =
   | { type: 'ADD_COMMENT'; payload: { bugId: string; comment: BugComment } }
   | { type: 'ADD_TOAST'; payload: { message: string; type: 'success' | 'error' | 'info' | 'warning' } }
   | { type: 'REMOVE_TOAST'; payload: string }
-  | { type: 'SYNC_BUGS'; payload: Bug[] };
+  | { type: 'SYNC_BUGS'; payload: Bug[] }
+  | { type: 'UPDATE_USER'; payload: UserProfile };
 
 function bugReducer(state: BugState, action: BugAction): BugState {
   switch (action.type) {
+    case 'UPDATE_USER':
+      return { ...state, currentUser: action.payload };
     case 'SYNC_BUGS':
       return { ...state, bugs: action.payload };
     case 'SET_VIEW':
