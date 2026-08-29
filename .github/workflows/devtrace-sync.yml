@@ -1,0 +1,30 @@
+name: DevTrace Live Synchronization
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, deleted]
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    name: Sync GitHub Events to Firestore
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase Admin dependency
+        run: npm install firebase-admin
+
+      - name: Run DevTrace Sync Script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/devtrace-sync.js

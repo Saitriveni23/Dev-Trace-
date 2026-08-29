@@ -280,6 +280,44 @@ export default function SettingsView() {
               </div>
             ))}
           </div>
+
+          {integrations['github'] && (
+            <div style={{
+              marginTop: '24px',
+              background: '#1A2233',
+              border: '2px dashed var(--accent-yellow)',
+              borderRadius: '8px',
+              padding: '20px',
+              color: '#FFFFFF'
+            }}>
+              <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--accent-yellow)', marginBottom: '10px' }}>
+                🐙 Live GitHub Sync Instructions
+              </h3>
+              <p style={{ fontSize: '0.74rem', lineHeight: '1.4', color: '#9CA3AF', marginBottom: '12px' }}>
+                To automatically detect issues and commits pushed to GitHub and display them as stickers on your board in real-time, configure your repository with these steps:
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.72rem' }}>
+                <div>
+                  <strong style={{ color: '#FFFFFF' }}>Step 1: Generate Firebase Service Account Key</strong>
+                  <span style={{ display: 'block', color: '#9CA3AF', marginTop: '2px' }}>
+                    In your **Firebase Console**, go to Project Settings (gear icon) &gt; **Service accounts**. Click **Generate new private key** and save the downloaded JSON file.
+                  </span>
+                </div>
+                <div>
+                  <strong style={{ color: '#FFFFFF' }}>Step 2: Add Secret to GitHub</strong>
+                  <span style={{ display: 'block', color: '#9CA3AF', marginTop: '2px' }}>
+                    In your GitHub Repository, go to **Settings &gt; Secrets and variables &gt; Actions &gt; New repository secret**. Name it <code style={{ color: 'var(--accent-yellow)' }}>FIREBASE_SERVICE_ACCOUNT</code> and paste the entire JSON key file content.
+                  </span>
+                </div>
+                <div>
+                  <strong style={{ color: '#FFFFFF' }}>Step 3: Push Workflow File</strong>
+                  <span style={{ display: 'block', color: '#9CA3AF', marginTop: '2px' }}>
+                    The workflow is already configured at <code style={{ color: 'var(--accent-purple)' }}>.github/workflows/devtrace-sync.yml</code>. Pushing this project to your repository activates it immediately!
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
