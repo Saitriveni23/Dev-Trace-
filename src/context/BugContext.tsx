@@ -42,7 +42,7 @@ type BugAction =
   | { type: 'UPDATE_BUG_STATUS'; payload: { id: string; status: BugStatus; resolution?: BugResolution } }
   | { type: 'UPDATE_BUG_FLAG'; payload: { bugId: string; flag: BugFlag } }
   | { type: 'ADD_COMMENT'; payload: { bugId: string; comment: BugComment } }
-  | { type: 'ADD_TOAST'; payload: { message: string; type: 'success' | 'error' | 'info' | 'warning' } }
+  | { type: 'ADD_TOAST'; payload: { id: string; message: string; type: 'success' | 'error' | 'info' | 'warning' } }
   | { type: 'REMOVE_TOAST'; payload: string }
   | { type: 'SYNC_BUGS'; payload: Bug[] }
   | { type: 'UPDATE_USER'; payload: UserProfile }
@@ -129,13 +129,11 @@ function bugReducer(state: BugState, action: BugAction): BugState {
         })
       };
     }
-    case 'ADD_TOAST': {
-      const id = `toast-${Date.now()}`;
+    case 'ADD_TOAST':
       return {
         ...state,
-        toasts: [...state.toasts, { id, ...action.payload }]
+        toasts: [...state.toasts, action.payload]
       };
-    }
     case 'REMOVE_TOAST':
       return { ...state, toasts: state.toasts.filter(t => t.id !== action.payload) };
     default:
@@ -368,9 +366,10 @@ export function BugProvider({ children }: { children: React.ReactNode }) {
   }, [state.bugs]);
 
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
-    dispatch({ type: 'ADD_TOAST', payload: { message, type } });
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    dispatch({ type: 'ADD_TOAST', payload: { id, message, type } });
     setTimeout(() => {
-      dispatch({ type: 'REMOVE_TOAST', payload: `toast-${Date.now() - 10}` });
+      dispatch({ type: 'REMOVE_TOAST', payload: id });
     }, 4000);
   }, []);
 
