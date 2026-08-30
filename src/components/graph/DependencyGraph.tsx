@@ -133,12 +133,18 @@ export default function DependencyGraph() {
   const resetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
   return (
-    <div className="graph-view" style={{ background: 'var(--bg-base)' }}>
+    <div className="graph-view" style={{ 
+      background: '#2b211a', // Dark corkboard color
+      backgroundImage: 'radial-gradient(#4a382c 15%, transparent 15%), radial-gradient(#4a382c 15%, transparent 15%)',
+      backgroundSize: '16px 16px',
+      backgroundPosition: '0 0, 8px 8px',
+      flex: 1, display: 'flex', flexDirection: 'column', height: '100%' 
+    }}>
       {/* Toolbar */}
-      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--glass-bg)', backdropFilter: 'var(--glass-blur)', flexShrink: 0 }}>
+      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-surface)', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <GitBranch size={16} style={{ color: 'var(--color-primary)' }} />
-          <span className="view-title">Dependency Graph</span>
+          <GitBranch size={16} style={{ color: 'var(--accent-coral)' }} />
+          <span className="view-title">"Red String" Evidence Board</span>
         </div>
         <span className="view-count">{nodes.length} nodes · {edges.length} edges</span>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
@@ -211,7 +217,7 @@ export default function DependencyGraph() {
             </defs>
 
             <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-              {/* Edges */}
+              {/* Edges (Red Strings) */}
               {edges.map(edge => {
                 const from = getNodeById(edge.from);
                 const to = getNodeById(edge.to);
@@ -224,21 +230,44 @@ export default function DependencyGraph() {
                 const cp2x = x2 - (x2 - x1) * 0.5;
                 const isHighlighted = hoveredId === edge.from || hoveredId === edge.to;
                 return (
-                  <path
-                    key={`${edge.from}-${edge.to}`}
-                    d={`M ${x1} ${y1} C ${cp1x} ${y1}, ${cp2x} ${y2}, ${x2 - 8} ${y2}`}
-                    fill="none"
-                    stroke={isHighlighted ? '#f87171' : '#6e7eab'}
-                    strokeWidth={isHighlighted ? 2.5 : 1.5}
-                    strokeOpacity={isHighlighted ? 1 : 0.5}
-                    strokeDasharray={isHighlighted ? undefined : '5,4'}
-                    markerEnd={isHighlighted ? 'url(#arrowhead)' : 'url(#arrowhead-normal)'}
-                    style={{ transition: 'all 0.2s' }}
-                  />
+                  <g key={`${edge.from}-${edge.to}`}>
+                    {/* Shadow of string */}
+                    <path
+                      d={`M ${x1} ${y1} C ${cp1x} ${y1 + 10}, ${cp2x} ${y2 + 10}, ${x2} ${y2}`}
+                      fill="none"
+                      stroke="rgba(0,0,0,0.5)"
+                      strokeWidth={5}
+                      style={{ transition: 'all 0.2s' }}
+                    />
+                    {/* Main String */}
+                    <path
+                      d={`M ${x1} ${y1} C ${cp1x} ${y1}, ${cp2x} ${y2}, ${x2} ${y2}`}
+                      fill="none"
+                      stroke={isHighlighted ? '#ff1111' : '#dc2626'}
+                      strokeWidth={isHighlighted ? 4 : 3}
+                      strokeLinecap="round"
+                      style={{ transition: 'all 0.2s' }}
+                    />
+                    {/* Red Thread texture over it */}
+                    <path
+                      d={`M ${x1} ${y1} C ${cp1x} ${y1}, ${cp2x} ${y2}, ${x2} ${y2}`}
+                      fill="none"
+                      stroke="rgba(255,255,255,0.2)"
+                      strokeWidth={1}
+                      strokeDasharray="2,2"
+                      style={{ transition: 'all 0.2s' }}
+                    />
+                    {/* Thumbtacks */}
+                    <circle cx={x1} cy={y1} r={4.5} fill="#fca5a5" stroke="#991b1b" strokeWidth={1} />
+                    <circle cx={x1 - 1} cy={y1 - 1} r={1.5} fill="#fff" opacity={0.6} />
+                    
+                    <circle cx={x2} cy={y2} r={4.5} fill="#fca5a5" stroke="#991b1b" strokeWidth={1} />
+                    <circle cx={x2 - 1} cy={y2 - 1} r={1.5} fill="#fff" opacity={0.6} />
+                  </g>
                 );
               })}
 
-              {/* Nodes */}
+              {/* Nodes (Polaroid Evidence Cards) */}
               {nodes.map(node => {
                 const { bug, x, y } = node;
                 const statusColor = STATUS_COLOR[bug.status] ?? '#6e7eab';
@@ -247,66 +276,87 @@ export default function DependencyGraph() {
                 const isRelated = hoveredId
                   ? edges.some(e => (e.from === hoveredId && e.to === bug.id) || (e.to === hoveredId && e.from === bug.id))
                   : false;
+                
+                // Slight random rotation for messy board look (-3 to +3 degrees)
+                const rot = (bug.numId % 7) - 3; 
 
                 return (
                   <g
                     key={bug.id}
                     className="dep-node"
-                    transform={`translate(${x}, ${y})`}
+                    transform={`translate(${x}, ${y}) rotate(${rot}, ${NODE_WIDTH/2}, ${NODE_HEIGHT/2})`}
                     onMouseEnter={() => setHoveredId(bug.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => dispatch({ type: 'SELECT_BUG', payload: bug.id })}
-                    data-tooltip={`Open ${bug.id} details`}
+                    style={{ cursor: 'pointer' }}
                   >
                     {/* Shadow */}
                     <rect
-                      x={2} y={4}
-                      width={NODE_WIDTH} height={NODE_HEIGHT}
-                      rx={10} ry={10}
-                      fill={statusColor}
-                      opacity={0.12}
+                      x={3} y={5}
+                      width={NODE_WIDTH} height={NODE_HEIGHT + 25}
+                      fill="rgba(0,0,0,0.4)"
                     />
-                    {/* Main rect */}
+                    
+                    {/* Polaroid White Base */}
                     <rect
-                      width={NODE_WIDTH} height={NODE_HEIGHT}
-                      rx={10} ry={10}
-                      fill={isHovered ? 'hsl(228, 14%, 16%)' : 'hsl(228, 14%, 12%)'}
-                      stroke={isHovered ? statusColor : isRelated ? severityColor : 'hsla(220, 25%, 40%, 0.4)'}
-                      strokeWidth={isHovered ? 2 : isRelated ? 1.5 : 1}
-                      filter={isHovered ? 'url(#glow)' : undefined}
+                      width={NODE_WIDTH} height={NODE_HEIGHT + 25}
+                      fill="#f9f5e9"
+                      stroke={isHovered ? statusColor : '#d1d5db'}
+                      strokeWidth={isHovered ? 2 : 1}
                       style={{ transition: 'all 0.2s' }}
                     />
-                    {/* Top severity bar */}
-                    <rect
-                      width={NODE_WIDTH} height={3}
-                      rx={10} ry={10}
-                      fill={severityColor}
-                      opacity={0.8}
+                    
+                    {/* Image Area placeholder (Top part of polaroid) */}
+                    <rect 
+                      x={8} y={8} 
+                      width={NODE_WIDTH - 16} height={NODE_HEIGHT - 20} 
+                      fill="#111827" 
                     />
-                    {/* Status indicator dot */}
-                    <circle cx={16} cy={20} r={5} fill={statusColor} />
-                    {/* Bug ID */}
-                    <text
-                      x={26} y={24}
-                      fontSize={11} fontWeight={700}
-                      fontFamily="JetBrains Mono, monospace"
+
+                    {/* Status indicator line instead of image */}
+                    <rect
+                      x={8} y={8}
+                      width={NODE_WIDTH - 16} height={4}
                       fill={statusColor}
+                    />
+                    
+                    {/* Bug ID in marker font */}
+                    <text
+                      x={14} y={32}
+                      fontSize={16} fontWeight={800}
+                      fontFamily="var(--font-hand)"
+                      fill="#f9f5e9"
                     >{bug.id}</text>
-                    {/* Title */}
-                    <foreignObject x={10} y={32} width={NODE_WIDTH - 20} height={30}>
+
+                    {/* Masking tape on top */}
+                    <path 
+                      d={`M ${NODE_WIDTH/2 - 20} -6 L ${NODE_WIDTH/2 + 25} -12 L ${NODE_WIDTH/2 + 22} 8 L ${NODE_WIDTH/2 - 23} 10 Z`}
+                      fill="rgba(255,255,255,0.7)"
+                    />
+                    
+                    {/* Title in marker font (Polaroid footer area) */}
+                    <foreignObject x={8} y={NODE_HEIGHT - 6} width={NODE_WIDTH - 16} height={35}>
                       <div
                         style={{
-                          fontSize: 10, lineHeight: '13px', color: '#c8d0e8',
+                          fontSize: 13, lineHeight: '14px', color: '#111827',
+                          fontFamily: 'var(--font-hand)', fontWeight: 'bold',
                           overflow: 'hidden', display: '-webkit-box',
-                          WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'
+                          WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                          textAlign: 'center'
                         }}
                       >
                         {bug.title}
                       </div>
                     </foreignObject>
-                    {/* Priority tag */}
-                    <rect x={NODE_WIDTH - 32} y={6} width={26} height={14} rx={7} fill={`${severityColor}22`} stroke={`${severityColor}55`} />
-                    <text x={NODE_WIDTH - 19} y={16.5} fontSize={9} fontWeight={800} textAnchor="middle" fill={severityColor}>
+                    
+                    {/* Priority Stamp */}
+                    <text 
+                      x={NODE_WIDTH - 25} y={32} 
+                      fontSize={14} fontWeight={800} 
+                      fontFamily="var(--font-hand)" 
+                      fill={severityColor}
+                      transform={`rotate(15, ${NODE_WIDTH - 25}, 32)`}
+                    >
                       {bug.priority}
                     </text>
                   </g>
