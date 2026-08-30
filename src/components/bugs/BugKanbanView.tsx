@@ -62,7 +62,7 @@ export default function BugKanbanView() {
                   </div>
                 )}
                 {colBugs.map(bug => {
-                  const hasAttachment = bug.attachments.length > 0 || bug.numId % 3 === 0;
+                  const hasAttachment = (bug.attachments?.length || 0) > 0 || (bug.numId || 0) % 3 === 0;
                   const commentsCount = (bug.comments || []).length || 2;
                   
                   // Use compact dark theme styling for the cards
@@ -102,7 +102,7 @@ export default function BugKanbanView() {
                             color: 'var(--text-muted)'
                           }}
                         >
-                          {bug.component.split(' ')[0]}
+                          {(bug.component || 'System').split(' ')[0]}
                         </span>
                       </div>
 
