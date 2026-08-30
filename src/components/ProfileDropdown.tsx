@@ -67,7 +67,8 @@ export default function ProfileDropdown() {
   };
 
   const handleThemeToggle = () => {
-    const isLight = document.body.classList.toggle('light-notebook');
+    const isLight = document.body.classList.toggle('light-theme');
+    localStorage.setItem('devtrace_theme', isLight ? 'light' : 'dark');
     showToast(`Notebook Cover: ${isLight ? 'Light Layout' : 'Original Sketchbook'}`, 'success');
   };
 

@@ -50,9 +50,9 @@ export default function SettingsView() {
   useEffect(() => {
     localStorage.setItem('devtrace_theme', theme);
     if (theme === 'light') {
-      document.body.classList.add('light-notebook');
+      document.body.classList.add('light-theme');
     } else {
-      document.body.classList.remove('light-notebook');
+      document.body.classList.remove('light-theme');
     }
   }, [theme]);
 

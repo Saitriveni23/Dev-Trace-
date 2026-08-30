@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useBugs } from '../../context/BugContext';
 import type { BugStatus } from '../../types';
 import { SeverityBadge, PriorityBadge } from '../common/Badge';
@@ -16,6 +16,14 @@ const COLUMNS: { statuses: BugStatus[]; label: string; dotColor: string }[] = [
 export default function BugKanbanView() {
   const { getFilteredBugs, selectedBugId, dispatch } = useBugs();
   const bugs = getFilteredBugs();
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dispatch({ type: 'SELECT_BUG', payload: null });
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [dispatch]);
 
   return (
     <div className="kanban-view" style={{ padding: '16px', gap: '12px' }}>
