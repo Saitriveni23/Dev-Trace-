@@ -6,6 +6,7 @@ import {
   Coffee, Radio, Volume2, VolumeX, Music
 } from 'lucide-react';
 import { useBugs } from '../../context/BugContext';
+import ReportProblemModal from '../ReportProblemModal';
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   Atom, Database, ShieldCheck, Layers, Flame, HelpCircle, UserCheck, GitPullRequest, Star
@@ -183,6 +184,7 @@ export default function Sidebar() {
       }
     };
   }, []);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const views = [
     { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null, tooltip: 'See key bug metrics and stats at a glance' },
@@ -195,6 +197,7 @@ export default function Sidebar() {
     { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null, tooltip: 'Configure your workspace settings' },
     { id: 'sketch', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null, tooltip: 'Sketch out ideas or architectural diagrams' },
     { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null, tooltip: 'Sync bugs and issues with GitHub repositories' },
+    { id: 'feedback', icon: <HelpCircle size={15} />, label: 'Report a Problem', count: null, tooltip: 'Submit feedback or report an issue with DevTrace' },
   ] as const;
 
   return (
@@ -206,7 +209,13 @@ export default function Sidebar() {
           key={v.id}
           className={`sidebar-item ${activeView === v.id ? 'active' : ''}`}
           style={activeView === v.id ? { background: '#FBBF24', color: '#111827', fontWeight: 800, borderRadius: '4px', boxShadow: '2px 2px 0px rgba(0,0,0,0.95)' } : {}}
-          onClick={() => dispatch({ type: 'SET_VIEW', payload: v.id as typeof activeView })}
+          onClick={() => {
+            if (v.id === 'feedback') {
+              setShowFeedbackModal(true);
+            } else {
+              dispatch({ type: 'SET_VIEW', payload: v.id as typeof activeView });
+            }
+          }}
           data-tooltip={v.tooltip}
           data-tooltip-pos="bottom"
         >
@@ -437,6 +446,10 @@ export default function Sidebar() {
       
       {/* Detective Profile Card */}
       <DetectiveProfileCard />
+
+      {showFeedbackModal && (
+        <ReportProblemModal onClose={() => setShowFeedbackModal(false)} />
+      )}
     </aside>
   );
 }
