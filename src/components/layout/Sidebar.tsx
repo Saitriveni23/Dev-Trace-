@@ -152,21 +152,16 @@ export default function Sidebar() {
 
   // Radio Audio playback management
   useEffect(() => {
+    if (!audioRef.current) return;
+    
     if (radioPlaying) {
-      if (!audioRef.current) {
-        // Steady royalty-free instrumental track
-        audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-        audioRef.current.loop = true;
-      }
       audioRef.current.muted = radioMuted;
       audioRef.current.play().catch(err => {
         console.warn('Playback blocked by browser auto-play policy:', err);
         setRadioPlaying(false);
       });
     } else {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+      audioRef.current.pause();
     }
   }, [radioPlaying]);
 
@@ -175,15 +170,6 @@ export default function Sidebar() {
       audioRef.current.muted = radioMuted;
     }
   }, [radioMuted]);
-
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const views = [
@@ -202,6 +188,14 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar" style={{ position: 'relative' }}>
+      {/* Hidden audio element for the precinct radio */}
+      <audio 
+        ref={audioRef} 
+        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+        loop 
+        preload="none"
+      />
+
       {/* Views */}
       <div className="sidebar-section-label" style={{ fontFamily: 'var(--font-hand)' }}>Workspace Views</div>
       {views.map(v => (
