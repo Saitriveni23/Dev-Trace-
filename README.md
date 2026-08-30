@@ -18,6 +18,16 @@ Instead of merely reskinning Bugzilla, DevTrace rethinks the user experience fro
   - 🤖 **AI Clue Insights**: Mocked AI integrations that analyze stack traces to propose root causes instantly.
   - 📊 **Dynamic CSV Exports**: Easily export bug lists to CSV for external reporting.
 
+## ⚖️ The Classic Rules, Reimagined
+
+Even though we’ve given the UI a massive glow-up, DevTrace is still built on the legendary rules that made Bugzilla great. We kept the core DNA, but made it friendly:
+
+1. **Bugs Only, No Fluff**: We are a pure defect-tracking tool. No generic project boards, no feature creep. We are here to help you solve "cases" (bugs) and nothing else.
+2. **Built on Open Source**: DevTrace is powered by free, open-source tools like React and Vite. No locked-down commercial systems here.
+3. **Lightning Fast**: Nobody likes a slow tool. By filtering everything instantly on your screen, we skip the slow, "speed-sucking" database loading screens so you can close cases faster.
+4. **Plug-and-Play Data**: Bugzilla famously made sure it wasn't tied to one specific database. We do the same! Our code is designed so you can easily swap out the backend database anytime without breaking the app.
+5. **Works Everywhere**: We stick to the standard rules of the web (clean HTML and standard CSS). No weird browser-specific hacks, meaning your notebook looks perfect no matter what browser you're using.
+
 ## ✨ Core Features
 
 1. **Bug Dossiers (The Issue Detail View)**

@@ -1,3 +1,11 @@
+/**
+ * ⚖️ BUGZILLA CORE PRINCIPLES:
+ * 1. Agnostic Data Layer (ANSI SQL equivalence): This context acts as the interface
+ *    between UI and data. UI components dispatch generic actions and never make 
+ *    database-specific calls. Firestore logic is completely encapsulated here.
+ * 2. Speed and Efficiency: We use optimistic UI updates and fast client-side filtering 
+ *    (`getFilteredBugs`) to minimize "speed sucking" remote queries.
+ */
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import type { Bug, BugStatus, BugResolution, BugSeverity, BugPriority, BugFlag, BugComment, Product, SavedSearch, UserProfile, MetricSummary } from '../types';
 import { INITIAL_BUGS, PRODUCTS, INITIAL_SAVED_SEARCHES, CURRENT_USER, USERS } from '../services/seedData';
