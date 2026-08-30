@@ -262,6 +262,81 @@ export default function TeamView() {
         ))}
       </div>
 
+      {/* Leaderboard - Most Wanted Suspects */}
+      <div style={{
+        background: '#1A2233',
+        border: '3px solid #111827',
+        borderRadius: '8px',
+        padding: '24px',
+        boxShadow: '5px 5px 0px rgba(0,0,0,0.95)',
+        marginBottom: '36px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div className="tape-strip" style={{ width: '80px', top: '-12px', right: '24px', transform: 'rotate(2deg)' }} />
+        
+        <h2 style={{ fontFamily: 'var(--font-marker)', fontSize: '1.8rem', color: '#FBBF24', margin: '0 0 20px', letterSpacing: '0.05em' }}>
+          🏆 Most Wanted (Bugs Squashed)
+        </h2>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[...TEAM_MEMBERS].sort((a, b) => b.bugs - a.bugs).map((member, index) => (
+            <div key={`lb-${member.id}`} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              background: '#0D1117',
+              border: `2px solid ${member.color}40`,
+              padding: '12px 20px',
+              borderRadius: '6px',
+              position: 'relative',
+              transition: 'transform 0.2s, background 0.2s',
+              cursor: 'default'
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateX(8px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateX(0)'}>
+              
+              {/* Rank */}
+              <div style={{
+                fontFamily: 'var(--font-marker)',
+                fontSize: '1.8rem',
+                color: index === 0 ? '#FBBF24' : index === 1 ? '#9CA3AF' : index === 2 ? '#B45309' : '#4B5563',
+                width: '30px',
+                textAlign: 'center'
+              }}>
+                #{index + 1}
+              </div>
+
+              {/* Avatar */}
+              <div style={{
+                width: '40px', height: '40px',
+                borderRadius: '50%',
+                background: `${member.color}20`,
+                border: `2px solid ${member.color}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 900, color: member.color, fontSize: '1.2rem'
+              }}>
+                {member.avatar}
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 900, fontSize: '1.1rem', color: '#FFFFFF' }}>{member.name}</div>
+                <div style={{ fontFamily: 'var(--font-hand)', color: member.color, fontSize: '0.9rem' }}>{member.role}</div>
+              </div>
+
+              {/* Score */}
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontFamily: 'var(--font-marker)', fontSize: '1.8rem', color: '#FFFFFF' }}>
+                  {member.bugs}
+                </div>
+                <div style={{ fontFamily: 'var(--font-hand)', fontSize: '0.8rem', color: '#9CA3AF' }}>Cases Closed</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Invite sticky note form */}
       <div style={{
         background: '#FEF9C3',
