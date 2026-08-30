@@ -3,7 +3,8 @@
   
   # 🕵️‍♂️ DevTrace: The Developer Notebook
   
-  **A modern, gamified, and heavily stylized reimagining of legacy bug trackers.**
+  **DevTrace is a fun, detective-themed bug tracking application built for modern developers.** 
+  It takes the boring work of tracking software bugs and turns it into solving "cases". You can log issues, assign them to teammates, upload screenshots as "evidence", and track your squad's progress on a gamified leaderboard.
   
   [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
