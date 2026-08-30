@@ -1,5 +1,5 @@
-const fs = require('fs');
-const admin = require('firebase-admin');
+import fs from 'fs';
+import admin from 'firebase-admin';
 
 // 1. Verify secrets are present
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
