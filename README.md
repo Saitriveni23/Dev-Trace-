@@ -17,6 +17,34 @@
 
 ---
 
+## 📖 Brief Explanation & Architecture Flow
+
+**DevTrace** is a modernized, gamified bug-tracking application designed specifically for developers. It transforms traditional, mundane bug reporting into an engaging "detective case" experience. The application provides a seamless workflow for teams to log issues, upload visual evidence, assign tasks, and track resolutions on a live leaderboard. Under the hood, it leverages a robust React frontend and real-time Firebase syncing to ensure your team is always up-to-date.
+
+### 🏗️ Application Flowchart
+
+```mermaid
+graph TD
+    A[User/Detective] -->|Login| B(Firebase Authentication)
+    B --> C{Main Dashboard}
+    
+    C -->|View Cases| D[Bug Dossiers / Issue List]
+    C -->|Report Bug| E[Interactive Tip Line / New Issue]
+    C -->|Team Stats| F[Detective Squad Leaderboard]
+    C -->|Live Activity| G[Audit Logs & Heatmaps]
+    
+    D -->|Filter & Export| H[CSV Export / Quick Triage]
+    D -->|Add Evidence| I[Polaroid Attachments]
+    
+    E -->|Save Data| J[(Firebase Cloud Firestore)]
+    I -->|Store Media| J
+    
+    K[GitHub Actions] -->|Sync Events| J
+    J -->|Real-time Updates| C
+```
+
+---
+
 ## 💡 The Mission: Bugzilla Reconstruction
 
 The goal of this project was to tackle the **Developer Tool Reconstruction** of classic systems like Bugzilla. Instead of merely reskinning it, **DevTrace** rethinks the user experience from the ground up:
