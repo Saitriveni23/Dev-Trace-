@@ -200,6 +200,39 @@ export default function MetricsDashboard() {
   const [howToOpen, setHowToOpen] = useState(true);
   const [showDemoTour, setShowDemoTour] = useState(true);
 
+  // Skill Insights state
+  const [isScanning, setIsScanning] = useState(false);
+  const [hasScanned, setHasScanned] = useState(false);
+  const [scannedInsights, setScannedInsights] = useState<{ pattern: string, suggestion: string }[]>([]);
+
+  const handleScanMistakes = () => {
+    if (isScanning) return;
+    setIsScanning(true);
+    setHasScanned(false);
+    showToast('AI analyzing recent bug closures and code patterns...', 'info');
+    
+    setTimeout(() => {
+      setIsScanning(false);
+      setHasScanned(true);
+      setScannedInsights([
+        { 
+          pattern: 'Frequent CSS Float issues (3 cases this sprint)', 
+          suggestion: 'Watch: "Flexbox & Grid over Floats" Masterclass'
+        },
+        { 
+          pattern: 'Memory leaks in unmounted React components', 
+          suggestion: 'Read: "Cleaning up useEffect hooks properly"'
+        }
+      ]);
+      confetti({
+        particleCount: 50,
+        spread: 40,
+        colors: ['#8B5CF6', '#34D399']
+      });
+      showToast('Scan complete! Found 2 skill patterns to improve.', 'success');
+    }, 2500);
+  };
+
   // Derive dynamic activity feed
   const recentActivities = [...bugs]
     .flatMap(b => b.auditLog.map(log => ({ bugId: b.id, log })))
@@ -434,13 +467,54 @@ export default function MetricsDashboard() {
           </div>
         </div>
 
-        {/* AI Insight sticky note */}
-        <div style={{ transform: 'rotate(-2.5deg)', position: 'relative', marginTop: '20px' }}>
-          <span style={{ fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-sans)' }}>AI clue insight</span>
-          <div className="tape-strip" style={{ width: '30px', top: '-10px' }}></div>
-          <p style={{ fontFamily: 'var(--font-hand)', fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)', margin: '8px 0 0 0', lineHeight: 1.2 }}>
-            "Connection block timeouts share an 88% stack signature. Swipable connections are likely leaking pool allocations."
-          </p>
+        {/* Developer Skill Insights Panel */}
+        <div style={{ background: '#111827', border: '2px solid var(--accent-purple)', borderRadius: '8px', padding: '16px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <Sparkles size={20} style={{ color: 'var(--accent-purple)' }} />
+            <div style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-white)' }}>Developer Skill Insights</div>
+          </div>
+
+          {!hasScanned && !isScanning && (
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '16px' }}>
+                Analyze your recent bug patterns to discover targeted learning resources.
+              </p>
+              <button 
+                onClick={handleScanMistakes}
+                className="navbar-btn"
+                style={{ background: 'var(--accent-purple)', color: '#fff', border: '2px solid #fff' }}
+              >
+                Scan My Code Mistakes
+              </button>
+            </div>
+          )}
+
+          {isScanning && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '20px' }}>
+              <div className="spinner-loader" style={{ width: '24px', height: '24px', border: '3px solid var(--accent-purple)', borderTopColor: 'transparent' }} />
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent-purple)' }}>Analyzing stack traces & fix patterns...</div>
+            </div>
+          )}
+
+          {hasScanned && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {scannedInsights.map((insight, idx) => (
+                <div key={idx} style={{ background: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.3)', padding: '10px', borderRadius: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
+                    <ShieldAlert size={14} style={{ color: 'var(--accent-coral)', marginTop: '2px' }} />
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: 'var(--text-white)', fontWeight: 600 }}>{insight.pattern}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', paddingLeft: '22px' }}>
+                    <BookOpen size={14} style={{ color: 'var(--accent-mint)', marginTop: '2px' }} />
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: 'var(--accent-mint)' }}>{insight.suggestion}</span>
+                  </div>
+                </div>
+              ))}
+              <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                <span style={{ fontFamily: 'var(--font-hand)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>Updated just now</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sprint Donut & Recent Activity */}
