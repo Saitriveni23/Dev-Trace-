@@ -96,6 +96,7 @@ export default function Navbar() {
           <input
             ref={searchRef}
             className="navbar-search-input"
+            data-tour-id="tour-search"
             placeholder="Search sketchnotes, bug IDs, tags… (⌘K)"
             value={searchQuery}
             onChange={e => dispatch({ type: 'SET_SEARCH_QUERY', payload: e.target.value })}
@@ -111,6 +112,7 @@ export default function Navbar() {
           <button
             className="navbar-btn"
             onClick={() => setShowNewBug(true)}
+            data-tour-id="tour-new-sticker"
             data-tooltip="Report a new bug (shortcut: ⌘N / Ctrl+N)"
             data-tooltip-pos="bottom"
             aria-label="New Sticker"

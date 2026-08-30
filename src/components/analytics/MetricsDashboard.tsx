@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useBugs } from '../../context/BugContext';
+import DemoTour from '../common/DemoTour';
 import {
   BarChart2, TrendingDown, Clock, ShieldAlert, Zap, Coffee,
   Sparkles, Smile, Bug, CheckSquare, Square, Search, Bell, Sun, Moon,
@@ -197,6 +198,7 @@ export default function MetricsDashboard() {
   const [toggleDark, setToggleDark] = useState(true);
   const [museumIndex, setMuseumIndex] = useState(0);
   const [howToOpen, setHowToOpen] = useState(true);
+  const [showDemoTour, setShowDemoTour] = useState(true);
 
   // Derive dynamic activity feed
   const recentActivities = [...bugs]
@@ -373,8 +375,11 @@ export default function MetricsDashboard() {
 
       </div>
 
+      <DemoTour open={showDemoTour} onComplete={() => setShowDemoTour(false)} />
+
       {/* ROW 2: Four colorful sticky statistic cards */}
       <div 
+        data-tour-id="tour-metrics"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',

@@ -208,6 +208,7 @@ export default function Sidebar() {
         <div
           key={v.id}
           className={`sidebar-item ${activeView === v.id ? 'active' : ''}`}
+          data-tour-id={v.id === 'dashboard' ? 'tour-nav-overview' : v.id === 'assistant' ? 'tour-ai-assistant' : undefined}
           style={activeView === v.id ? { background: '#FBBF24', color: '#111827', fontWeight: 800, borderRadius: '4px', boxShadow: '2px 2px 0px rgba(0,0,0,0.95)' } : {}}
           onClick={() => {
             if (v.id === 'feedback') {
@@ -236,6 +237,7 @@ export default function Sidebar() {
       <div
         className={`product-chip ${!filterProduct ? 'active' : ''}`}
         onClick={() => dispatch({ type: 'SET_FILTER_PRODUCT', payload: null })}
+        data-tour-id="tour-product-filters"
         data-tooltip="Show bugs from all projects"
         data-tooltip-pos="bottom"
       >
