@@ -176,7 +176,7 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar: string;
-  role: 'Admin' | 'Security Officer' | 'Core Maintainer' | 'Triager' | 'Contributor' | 'Guest';
+  role: string;
   groups: string[];
 }
 
