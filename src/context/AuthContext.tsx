@@ -55,22 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       return { success: true, isMock: false };
     } catch (err: any) {
-      console.warn('Firebase Google Auth error, activating mock fallback:', err);
-      const mockUser = {
-        uid: 'mock-google-user',
-        email: 'saitriveni@devtrace.io',
-        displayName: 'Triveni',
-        photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Triveni',
-        emailVerified: true,
-      };
-      localStorage.setItem('devtrace_mock_user', JSON.stringify(mockUser));
-      setUser(mockUser as any);
-      confetti({
-        particleCount: 100,
-        spread: 60,
-        origin: { y: 0.6 }
-      });
-      return { success: true, isMock: true, error: err.message };
+      console.error('Firebase Google Auth error:', err);
+      // We removed the mock fallback so the user can see the actual error!
+      throw err;
     }
   };
 
