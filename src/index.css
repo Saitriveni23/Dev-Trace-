@@ -1041,7 +1041,14 @@ body {
   transition: transform 0.2s ease;
   min-height: 140px;
   justify-content: center;
+  background-color: var(--paper-white); /* Default */
 }
+
+.note-yellow { background-color: var(--accent-yellow) !important; }
+.note-pink { background-color: #fca5a5 !important; }
+.note-purple { background-color: var(--accent-purple) !important; }
+.note-blue { background-color: #93c5fd !important; }
+.note-coral { background-color: var(--accent-coral) !important; }
 .metric-sticky-card:hover {
   transform: translateY(-4px) rotate(-1.5deg);
 }
