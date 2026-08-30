@@ -28,6 +28,13 @@ function AppInner() {
   const { activeView, guestMode, dispatch } = useBugs();
 
   useEffect(() => {
+    // Restore theme from localStorage
+    if (localStorage.getItem('devtrace_theme') === 'light') {
+      document.body.classList.add('light-theme');
+    }
+  }, []);
+
+  useEffect(() => {
     if (!loading) {
       if (user) {
         if (activeView === 'landing' || activeView === 'login') {

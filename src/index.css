@@ -29,6 +29,23 @@
   
   --bg-grid: rgba(255, 255, 255, 0.015);
   --border-subtle: rgba(255,255,255,0.06);
+}
+
+/* === Light Theme Overrides === */
+body.light-theme {
+  --bg-notebook: #f3f0e8;      /* Cream background */
+  --bg-surface: #ffffff;       /* White surface */
+  --bg-secondary: #e8e6df;     /* Slightly darker cream */
+  
+  --text-white: #111827;       /* Primary text becomes dark */
+  --text-muted: #6B7280;       /* Muted text */
+  --text-disabled: #9CA3AF;    /* Dimmed hint text */
+  
+  --bg-grid: rgba(0, 0, 0, 0.03);
+  --border-subtle: rgba(0,0,0,0.12);
+}
+
+:root {
 
   /* Toast/status semantic aliases */
   --color-success: var(--accent-mint);

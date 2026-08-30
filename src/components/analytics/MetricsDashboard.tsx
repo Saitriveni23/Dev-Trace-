@@ -195,7 +195,20 @@ export default function MetricsDashboard() {
   // State hooks for interactive widgets
   const [coffeeCups, setCoffeeCups] = useState(3);
   const [devMood, setDevMood] = useState('Energetic ⚡');
-  const [toggleDark, setToggleDark] = useState(true);
+  const [toggleDark, setToggleDark] = useState(() => {
+    return localStorage.getItem('devtrace_theme') !== 'light';
+  });
+  
+  useEffect(() => {
+    if (toggleDark) {
+      document.body.classList.remove('light-theme');
+      localStorage.setItem('devtrace_theme', 'dark');
+    } else {
+      document.body.classList.add('light-theme');
+      localStorage.setItem('devtrace_theme', 'light');
+    }
+  }, [toggleDark]);
+
   const [museumIndex, setMuseumIndex] = useState(0);
   const [howToOpen, setHowToOpen] = useState(true);
   const [showDemoTour, setShowDemoTour] = useState(true);
