@@ -4,6 +4,7 @@ import { useBugs } from '../../context/BugContext';
 import NewBugModal from '../bugs/NewBugModal';
 import CommandPalette from './CommandPalette';
 import ProfileDropdown from '../ProfileDropdown';
+import NotificationsDropdown from '../NotificationsDropdown';
 
 // Cute hand-drawn style Bug Mascot SVG
 const BugMascot = () => (
@@ -142,19 +143,7 @@ export default function Navbar() {
             <Terminal size={16} />
           </button>
 
-          <div className="paper-clip-container">
-            <div className="paper-clip-decoration" />
-            <button
-              className="navbar-icon-btn"
-              onClick={() => showToast('No new notifications yet! 🕵️‍♂️', 'info')}
-              data-tooltip="View alerts and notifications"
-              data-tooltip-pos="bottom"
-              aria-label="Notifications"
-            >
-              <Bell size={16} />
-              <span className="notification-dot" />
-            </button>
-          </div>
+          <NotificationsDropdown />
 
           <ProfileDropdown />
         </div>
