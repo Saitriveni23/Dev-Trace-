@@ -82,7 +82,7 @@ export default function NotificationsDropdown() {
               top: '120%',
               right: '-10px',
               width: '320px',
-              background: 'var(--bg-panel)',
+              background: 'var(--bg-surface)',
               border: '2px solid rgba(255, 255, 255, 0.05)',
               borderRadius: 'var(--radius-md)',
               padding: '8px',
