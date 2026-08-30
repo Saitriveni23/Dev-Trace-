@@ -162,8 +162,8 @@ export default function AIAssistantView() {
       }}
     >
       {/* Floating doodles backgrounds */}
-      <span style={{ position: 'absolute', top: '10%', right: '5%', color: 'rgba(255,255,255,0.03)', fontSize: '5rem', fontFamily: 'var(--font-hand)', pointerEvents: 'none' }}>🤖 silicon</span>
-      <span style={{ position: 'absolute', bottom: '15%', left: '20%', color: 'rgba(255,255,255,0.02)', fontSize: '6rem', fontFamily: 'var(--font-hand)', pointerEvents: 'none' }}>★ test cases</span>
+      <span style={{ position: 'absolute', top: '10%', right: '5%', color: 'white', opacity: 0.03, fontSize: '5rem', fontFamily: 'var(--font-hand)', pointerEvents: 'none' }}>🤖 silicon</span>
+      <span style={{ position: 'absolute', bottom: '15%', left: '20%', color: 'white', opacity: 0.02, fontSize: '6rem', fontFamily: 'var(--font-hand)', pointerEvents: 'none' }}>★ test cases</span>
 
       {/* Left Column: Robot Mascot and Feature Stickers */}
       <div 
@@ -265,6 +265,7 @@ export default function AIAssistantView() {
                 <div 
                   className={`metric-sticky-card ${msg.noteClass}`}
                   style={{
+                    minWidth: '140px',
                     minHeight: 'auto',
                     padding: '16px 20px',
                     borderRadius: '2px',
