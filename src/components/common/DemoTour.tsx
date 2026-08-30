@@ -86,14 +86,16 @@ export default function DemoTour({
     const width = 320;
     const maxLeft = window.innerWidth - width - 20;
     const left = Math.min(Math.max(highlightRect.right + 18, 20), maxLeft);
-    const top = Math.min(Math.max(highlightRect.top - 8, 20), window.innerHeight - 180);
+    const isFourthStep = stepIndex === 3;
+    const topOffset = isFourthStep ? -22 : 0;
+    const top = Math.min(Math.max(highlightRect.top - 8 + topOffset, 20), window.innerHeight - 180);
 
     return {
       left: `${left}px`,
       top: `${top}px`,
       transform: 'none'
     };
-  }, [highlightRect]);
+  }, [highlightRect, stepIndex]);
 
   if (!open || !currentStep) return null;
 
