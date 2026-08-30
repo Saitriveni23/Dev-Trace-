@@ -86,7 +86,7 @@ export default function Navbar() {
           <div className="brand-logo-container">
             <BugMascot />
           </div>
-          <span className="brand-name">Dev<span>Trace</span></span>
+          <span className="brand-name" style={{ fontFamily: 'var(--font-marker)' }}>BUG<span style={{ color: 'var(--accent-yellow)' }}>STUDIO</span></span>
           <span className="brand-version">T-02</span>
         </div>
 
@@ -108,11 +108,25 @@ export default function Navbar() {
 
         <div className="navbar-actions">
           <button
-            className="navbar-btn navbar-btn-primary"
+            className="navbar-btn"
             onClick={() => setShowNewBug(true)}
             data-tooltip="Report a new bug (shortcut: ⌘N / Ctrl+N)"
             data-tooltip-pos="bottom"
             aria-label="New Sticker"
+            style={{
+              background: 'var(--accent-yellow)',
+              color: 'var(--text-dark)',
+              border: '2px solid var(--text-dark)',
+              borderRadius: '4px',
+              padding: '6px 14px',
+              fontWeight: 'bold',
+              fontFamily: 'var(--font-sans)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '2px 2px 0px rgba(0,0,0,1)',
+              transform: 'rotate(-1deg)'
+            }}
           >
             <Plus size={15} strokeWidth={2.5} />
             New Sticker
