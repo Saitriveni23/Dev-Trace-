@@ -1,38 +1,53 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, CheckCircle2, AlertTriangle, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useBugs } from '../context/BugContext';
+
+const INITIAL_NOTIFICATIONS = [
+  {
+    id: 1,
+    title: "New Clue Discovered",
+    message: "Lead Detective Alex commented on Case #104.",
+    time: "2m ago",
+    type: "message",
+    read: false
+  },
+  {
+    id: 2,
+    title: "Critical Blockage",
+    message: "Memory leak detected in production environment.",
+    time: "1h ago",
+    type: "alert",
+    read: false
+  },
+  {
+    id: 3,
+    title: "Case Closed",
+    message: "The Phantom Scroll issue has been resolved.",
+    time: "3h ago",
+    type: "success",
+    read: true
+  }
+];
 
 export default function NotificationsDropdown() {
+  const { dispatch } = useBugs();
   const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mock notifications
-  const notifications = [
-    {
-      id: 1,
-      title: "New Clue Discovered",
-      message: "Lead Detective Alex commented on Case #104.",
-      time: "2m ago",
-      type: "message",
-      read: false
-    },
-    {
-      id: 2,
-      title: "Critical Blockage",
-      message: "Memory leak detected in production environment.",
-      time: "1h ago",
-      type: "alert",
-      read: false
-    },
-    {
-      id: 3,
-      title: "Case Closed",
-      message: "The Phantom Scroll issue has been resolved.",
-      time: "3h ago",
-      type: "success",
-      read: true
-    }
-  ];
+  const handleMarkRead = (id: number) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+  };
+
+  const handleViewAllCases = () => {
+    setIsOpen(false);
+    dispatch({ type: 'SET_VIEW', payload: 'list' });
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -104,21 +119,30 @@ export default function NotificationsDropdown() {
               <span style={{ fontFamily: 'var(--font-marker)', fontSize: '1.1rem', color: 'var(--text-white)' }}>
                 Latest Intel
               </span>
-              <button 
-                onClick={() => setIsOpen(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--accent-coral)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--font-hand)' }}
+              <button
+                onClick={handleClearAll}
+                disabled={notifications.length === 0}
+                data-tooltip={notifications.length === 0 ? 'No notifications to clear' : 'Remove every notification from this list'}
+                style={{ background: 'none', border: 'none', color: 'var(--accent-coral)', fontSize: '0.8rem', cursor: notifications.length === 0 ? 'default' : 'pointer', fontFamily: 'var(--font-hand)', opacity: notifications.length === 0 ? 0.4 : 1 }}
               >
                 Clear all
               </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '350px', overflowY: 'auto' }}>
+              {notifications.length === 0 && (
+                <div style={{ padding: '20px 8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'var(--font-hand)' }}>
+                  No new case alerts pinned!
+                </div>
+              )}
               {notifications.map((notif) => (
-                <div 
+                <div
                   key={notif.id}
-                  style={{ 
-                    padding: '12px', 
-                    borderRadius: '4px', 
+                  onClick={() => handleMarkRead(notif.id)}
+                  data-tooltip={notif.read ? undefined : 'Mark as read'}
+                  style={{
+                    padding: '12px',
+                    borderRadius: '4px',
                     background: notif.read ? 'transparent' : 'rgba(255, 255, 255, 0.03)',
                     cursor: 'pointer',
                     transition: 'background 0.2s',
@@ -129,7 +153,7 @@ export default function NotificationsDropdown() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = notif.read ? 'transparent' : 'rgba(255, 255, 255, 0.03)'}
                 >
-                  <div style={{ marginTop: '2px', color: notif.type === 'message' ? 'var(--accent-blue)' : notif.type === 'alert' ? 'var(--accent-coral)' : 'var(--accent-mint)' }}>
+                  <div style={{ marginTop: '2px', color: notif.type === 'message' ? 'var(--paper-blue)' : notif.type === 'alert' ? 'var(--accent-coral)' : 'var(--accent-mint)' }}>
                     {notif.type === 'message' && <MessageSquare size={16} />}
                     {notif.type === 'alert' && <AlertTriangle size={16} />}
                     {notif.type === 'success' && <CheckCircle2 size={16} />}
@@ -150,13 +174,15 @@ export default function NotificationsDropdown() {
             </div>
             
             <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
-              <button 
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  color: 'var(--text-muted)', 
-                  fontSize: '0.8rem', 
-                  cursor: 'pointer', 
+              <button
+                onClick={handleViewAllCases}
+                data-tooltip="Go to the full bug list"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
                   padding: '4px',
                   width: '100%'
                 }}

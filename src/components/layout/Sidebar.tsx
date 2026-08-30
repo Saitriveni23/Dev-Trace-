@@ -193,7 +193,7 @@ export default function Sidebar() {
     { id: 'assistant', icon: <Sparkles size={15} />, label: 'AI Assistant', count: null, tooltip: 'Chat with the AI assistant for bug triage help' },
     { id: 'team', icon: <Users size={15} />, label: 'Team', count: null, tooltip: 'Manage team and collaboration' },
     { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null, tooltip: 'Configure your workspace settings' },
-    { id: 'doodle', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null, tooltip: 'Sketch out ideas or architectural diagrams' },
+    { id: 'sketch', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null, tooltip: 'Sketch out ideas or architectural diagrams' },
     { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null, tooltip: 'Sync bugs and issues with GitHub repositories' },
   ] as const;
 
