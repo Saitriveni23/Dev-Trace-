@@ -28,21 +28,7 @@
   
   --bg-grid: rgba(255, 255, 255, 0.015);
   --border-subtle: rgba(255,255,255,0.06);
-}
 
-body.light-notebook {
-  --bg-notebook: #F3F4F6;
-  --bg-surface: #FFFFFF;
-  --bg-secondary: #E5E7EB;
-  
-  --text-white: #111827;
-  --text-muted: #6B7280;
-  --text-dark: #111827;
-  
-  --bg-grid: rgba(0, 0, 0, 0.03);
-  --border-subtle: rgba(0,0,0,0.1);
-
-  
   /* Radii */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -63,6 +49,19 @@ body.light-notebook {
 
   --navbar-height: 70px;
   --sidebar-width: 270px;
+}
+
+body.light-notebook {
+  --bg-notebook: #F3F4F6;
+  --bg-surface: #FFFFFF;
+  --bg-secondary: #E5E7EB;
+
+  --text-white: #111827;
+  --text-muted: #6B7280;
+  --text-dark: #111827;
+
+  --bg-grid: rgba(0, 0, 0, 0.03);
+  --border-subtle: rgba(0,0,0,0.1);
 }
 
 /* === Reset & Global Styles === */
@@ -206,7 +205,9 @@ body {
 .app-sidebar {
   grid-column: 1;
   grid-row: 2;
+  min-width: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   border-right: 3px solid #201E2B;
   background: #12111A;
 }
@@ -214,6 +215,7 @@ body {
 .app-main {
   grid-column: 2;
   grid-row: 2;
+  min-width: 0;
   overflow-y: auto;
   background: var(--bg-notebook);
   position: relative;
