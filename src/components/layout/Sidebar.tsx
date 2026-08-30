@@ -211,7 +211,7 @@ export default function Sidebar() {
           data-tooltip-pos="bottom"
         >
           <span className="sidebar-item-icon" style={activeView === v.id ? { color: '#111827' } : {}}>{v.icon}</span>
-          <span>{v.label}</span>
+          <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={v.label}>{v.label}</span>
           {v.count !== null && v.count !== undefined && v.count > 0 && (
             <span className="sidebar-item-count" style={
               (v.id as string) === 'security' ? { background: 'rgba(255, 123, 107, 0.2)', color: 'var(--accent-coral)' } : {}
@@ -252,7 +252,7 @@ export default function Sidebar() {
             >
               <Icon size={12} />
             </div>
-            <span style={{ flex: 1 }}>{p.name}</span>
+            <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={p.name}>{p.name}</span>
             {count > 0 && <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>{count}</span>}
           </div>
         );
@@ -276,7 +276,7 @@ export default function Sidebar() {
             data-tooltip-pos="bottom"
           >
             <span className="sidebar-item-icon"><Icon size={14} /></span>
-            <span style={{ fontSize: '0.82rem' }}>{s.name}</span>
+            <span style={{ flex: 1, fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={s.name}>{s.name}</span>
           </div>
         );
       })}
@@ -303,7 +303,7 @@ export default function Sidebar() {
               className="sidebar-item-icon"
               style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0, margin: '3px 4px' }}
             />
-            <span style={{ fontSize: '0.82rem' }}>{status.replace('_', ' ')}</span>
+            <span style={{ flex: 1, fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={status.replace('_', ' ')}>{status.replace('_', ' ')}</span>
             <span className="sidebar-item-count">{count}</span>
           </div>
         );
