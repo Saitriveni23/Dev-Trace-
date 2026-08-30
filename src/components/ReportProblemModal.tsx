@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useBugs } from '../../context/BugContext';
+import { useBugs } from '../context/BugContext';
 import { X, HelpCircle, Send } from 'lucide-react';
 
 interface Props {
