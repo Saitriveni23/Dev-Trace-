@@ -273,6 +273,7 @@ function BugCard({
       onClick={onClick}
       style={{ transform: `rotate(${angle}deg)` }}
       data-tooltip={selected ? 'Click to close this bug\'s details' : 'Click to open full bug details'}
+      data-tooltip-pos="top"
     >
       {/* masking tape strip decoration */}
       <div className="tape-strip"></div>

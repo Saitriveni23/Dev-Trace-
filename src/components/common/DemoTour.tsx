@@ -86,8 +86,7 @@ export default function DemoTour({
     const width = 320;
     const maxLeft = window.innerWidth - width - 20;
     const left = Math.min(Math.max(highlightRect.right + 18, 20), maxLeft);
-    const isFourthStep = stepIndex === 3;
-    const topOffset = isFourthStep ? -22 : 0;
+    const topOffset = 18;
     const top = Math.min(Math.max(highlightRect.top - 8 + topOffset, 20), window.innerHeight - 180);
 
     return {
@@ -95,7 +94,7 @@ export default function DemoTour({
       top: `${top}px`,
       transform: 'none'
     };
-  }, [highlightRect, stepIndex]);
+  }, [highlightRect]);
 
   if (!open || !currentStep) return null;
 

@@ -36,11 +36,7 @@ function AppInner() {
 
   useEffect(() => {
     if (!loading) {
-      if (user) {
-        if (activeView === 'landing' || activeView === 'login') {
-          dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
-        }
-      } else if (!guestMode) {
+      if (!user && !guestMode) {
         if (activeView !== 'landing' && activeView !== 'login') {
           dispatch({ type: 'SET_VIEW', payload: 'landing' });
         }

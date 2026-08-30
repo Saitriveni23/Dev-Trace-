@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useBugs } from '../../context/BugContext';
+import { useAuth } from '../../hooks/useAuth';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function LandingPage() {
   const { dispatch } = useBugs();
+  const { user } = useAuth();
   const [cursorPos, setCursorPos] = useState({ x: 200, y: 150 });
   const [boardRef, setBoardRef] = useState<HTMLDivElement | null>(null);
 
@@ -15,7 +17,11 @@ export default function LandingPage() {
       spread: 60,
       origin: { y: 0.6 }
     });
-    dispatch({ type: 'SET_VIEW', payload: 'login' });
+    if (user) {
+      dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
+    } else {
+      dispatch({ type: 'SET_VIEW', payload: 'login' });
+    }
   };
 
   const handleLiveDemo = () => {

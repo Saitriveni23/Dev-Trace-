@@ -172,14 +172,15 @@ export default function GithubSyncView() {
 
                   <div 
                     style={{
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1.5px solid rgba(255,255,255,0.08)',
+                      background: '#FDFBF7',
+                      border: '1.5px solid rgba(17, 24, 39, 0.2)',
                       borderRadius: '6px',
                       padding: '10px 14px',
                       flex: 1,
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      color: '#111827'
                     }}
                   >
                     <div>

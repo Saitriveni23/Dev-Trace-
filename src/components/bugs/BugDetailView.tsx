@@ -499,8 +499,11 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                   {bug.comments.map((comment, idx) => (
                     <div 
                       key={comment.id}
-                      className="metric-sticky-card note-yellow"
+                      className="metric-sticky-card"
                       style={{
+                        background: '#FDFBF7',
+                        border: '1.5px solid var(--text-dark)',
+                        borderRadius: '4px',
                         minHeight: 'auto',
                         padding: '12px 14px',
                         boxShadow: '2.5px 2.5px 0px rgba(0,0,0,0.95)',
@@ -512,7 +515,7 @@ export default function BugDetailPanel({ bugId, onClose }: Props) {
                       <p style={{ fontFamily: 'var(--font-hand)', fontSize: '1.05rem', color: 'var(--text-dark)', margin: '0 0 6px 0', fontWeight: 'bold', lineHeight: 1.2 }}>
                         {comment.content}
                       </p>
-                      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', fontSize: '0.62rem', opacity: 0.5, fontWeight: 900 }}>
+                      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', fontSize: '0.62rem', opacity: 0.5, fontWeight: 900, color: 'var(--text-dark)' }}>
                         <span>{comment.author}</span>
                         <span>{formatDate(comment.timestamp)}</span>
                       </div>

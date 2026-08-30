@@ -17,10 +17,10 @@
   --accent-coral: #EF4444;     /* Critical Red */
   --accent-mint: #34D399;      /* Success Green */
   
-  --paper-beige: #F9F5E9;      /* Cream Paper Card */
-  --paper-blue: #60A5FA;       /* Info Blue */
-  --paper-pink: #FCE7E7;       /* Pink Paper Card */
-  --paper-yellow: #F9F5E9;     /* Cream Paper Card default */
+  --paper-beige: #FDFBF7;      /* Light paper card */
+  --paper-blue: #F1F7FF;       /* Light blue paper card */
+  --paper-pink: #FFF5F5;       /* Light pink paper card */
+  --paper-yellow: #FFFDF2;     /* Light cream paper card */
   
   --text-white: #FFFFFF;       /* Primary Text */
   --text-muted: #9CA3AF;       /* Muted Text */
@@ -167,7 +167,8 @@ body {
   border-left: 2px dashed rgba(0,0,0,0.06);
   border-right: 2px dashed rgba(0,0,0,0.06);
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  z-index: 10;
+  z-index: 1;
+  pointer-events: none;
 }
 .tape-strip-side {
   position: absolute;
@@ -178,7 +179,8 @@ body {
   height: 16px;
   background: rgba(248, 243, 232, 0.3);
   backdrop-filter: blur(1px);
-  z-index: 10;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Coffee stain decoration */
@@ -590,6 +592,7 @@ body {
   position: relative;
   padding: 20px;
   border-radius: var(--radius-sm);
+  background: #FAF7EE;
   color: var(--text-dark);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -598,19 +601,20 @@ body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
+  border: 1.5px solid rgba(17, 24, 39, 0.12);
 }
 
-/* Alternate paper colors for cards */
-.bug-card-color-0 { background: var(--paper-beige); }
-.bug-card-color-1 { background: var(--paper-yellow); }
-.bug-card-color-2 { background: var(--paper-blue); }
-.bug-card-color-3 { background: var(--paper-pink); }
+/* Creamy white paper colors for cards */
+.bug-card-color-0 { background: #FAF7EE; }
+.bug-card-color-1 { background: #FAF7EE; }
+.bug-card-color-2 { background: #FAF7EE; }
+.bug-card-color-3 { background: #FAF7EE; }
 
 /* Rotating cards randomly using CSS variables passed from inline styles */
 .bug-card-notebook:hover {
   transform: translateY(-6px) scale(1.02) !important;
   box-shadow: var(--shadow-peel);
-  z-index: 10;
+  z-index: 100 !important;
 }
 
 .bug-card-notebook.selected {
@@ -1732,7 +1736,7 @@ body {
   pointer-events: none;
   transition: opacity 0.15s ease, transform 0.15s ease;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.6);
-  z-index: 500;
+  z-index: 9999;
 }
 [data-tooltip]::before {
   content: '';
@@ -1746,7 +1750,7 @@ body {
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.15s ease;
-  z-index: 500;
+  z-index: 9999;
 }
 [data-tooltip]:hover::after,
 [data-tooltip]:focus-visible::after,
