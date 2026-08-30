@@ -24,6 +24,7 @@ export default function LandingPage() {
       spread: 80,
       origin: { y: 0.5 }
     });
+    dispatch({ type: 'SET_GUEST_MODE', payload: true });
     dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
   };
 

@@ -59,6 +59,7 @@ export default function ProfileDropdown() {
       await logout();
       setIsOpen(false);
       showToast('Logged out successfully! zZ', 'info');
+      dispatch({ type: 'SET_GUEST_MODE', payload: false });
       dispatch({ type: 'SET_VIEW', payload: 'landing' });
     } catch (err: any) {
       showToast(`Logout failed: ${err.message}`, 'error');
@@ -263,9 +264,9 @@ export default function ProfileDropdown() {
 
               <div
                 className="dropdown-menu-item"
-                onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'assistant' }); }}
+                onClick={() => { setIsOpen(false); dispatch({ type: 'SET_VIEW', payload: 'settings' }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-hand)', fontSize: '1.15rem', color: 'var(--text-dark)', fontWeight: 'bold' }}
-                data-tooltip="Open the AI assistant view"
+                data-tooltip="Open your account and app settings"
                 data-tooltip-pos="left"
               >
                 <Settings size={14} />

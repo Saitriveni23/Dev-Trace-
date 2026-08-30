@@ -26,6 +26,7 @@ interface BugState {
   filterSeverity: BugSeverity | null;
   filterPriority: BugPriority | null;
   toasts: { id: string; message: string; type: 'success' | 'error' | 'info' | 'warning' }[];
+  guestMode: boolean;
 }
 
 type BugAction =
@@ -44,10 +45,13 @@ type BugAction =
   | { type: 'ADD_TOAST'; payload: { message: string; type: 'success' | 'error' | 'info' | 'warning' } }
   | { type: 'REMOVE_TOAST'; payload: string }
   | { type: 'SYNC_BUGS'; payload: Bug[] }
-  | { type: 'UPDATE_USER'; payload: UserProfile };
+  | { type: 'UPDATE_USER'; payload: UserProfile }
+  | { type: 'SET_GUEST_MODE'; payload: boolean };
 
 function bugReducer(state: BugState, action: BugAction): BugState {
   switch (action.type) {
+    case 'SET_GUEST_MODE':
+      return { ...state, guestMode: action.payload };
     case 'UPDATE_USER':
       return { ...state, currentUser: action.payload };
     case 'SYNC_BUGS':
@@ -153,6 +157,7 @@ const initialState: BugState = {
   filterSeverity: null,
   filterPriority: null,
   toasts: [],
+  guestMode: false,
 };
 
 interface BugContextType extends BugState {

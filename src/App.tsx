@@ -25,7 +25,7 @@ import './index.css';
 
 function AppInner() {
   const { user, loading } = useAuth();
-  const { activeView, dispatch } = useBugs();
+  const { activeView, guestMode, dispatch } = useBugs();
 
   useEffect(() => {
     if (!loading) {
@@ -33,13 +33,13 @@ function AppInner() {
         if (activeView === 'landing' || activeView === 'login') {
           dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
         }
-      } else {
+      } else if (!guestMode) {
         if (activeView !== 'landing' && activeView !== 'login') {
           dispatch({ type: 'SET_VIEW', payload: 'landing' });
         }
       }
     }
-  }, [user, loading, activeView, dispatch]);
+  }, [user, loading, activeView, guestMode, dispatch]);
 
   if (loading) {
     return (
