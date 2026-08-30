@@ -86,7 +86,9 @@ export default function AIAssistantView() {
       let botReply = '';
       const textLower = textToSend.toLowerCase();
 
-      if (textLower.includes('explain') || textLower.includes('error')) {
+      if (textLower === 'hi' || textLower === 'hello' || textLower === 'hey') {
+        botReply = '🤖 BugBot Clue: Hi there! How may I help you?';
+      } else if (textLower.includes('explain') || textLower.includes('error')) {
         botReply = '🤖 BugBot Clue: The exception points to a null pointer allocation at initialization. Line 84 tries to reference the client socket before the handler handshake completes. Wrap inside an index sanity check!';
       } else if (textLower.includes('duplicate')) {
         botReply = `🤖 BugBot Clue: Pinned cases BS-1045 ("Phantom Scroll") and BS-1112 ("Infinite Spinner") share 88% stack match indexes. Recommend merging case references together!`;
