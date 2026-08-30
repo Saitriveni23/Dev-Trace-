@@ -419,7 +419,7 @@ export default function MetricsDashboard() {
         }}
       >
         {/* Large Analytics Graph */}
-        <div>
+        <div style={{ background: '#181A20', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px' }}>
           <div style={{ fontFamily: 'var(--font-hand)', fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--accent-yellow)', marginBottom: '12px' }}>Burn down chart</div>
           <div style={{ height: '120px', borderBottom: '2px solid rgba(255,255,255,0.1)', borderLeft: '2px solid rgba(255,255,255,0.1)', position: 'relative' }}>
             <svg viewBox="0 0 300 120" width="100%" height="100%" fill="none" stroke="currentColor" strokeWidth="3">
@@ -439,7 +439,7 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Sprint Donut & Recent Activity */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#181A20', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '32px', height: '32px', position: 'relative' }}>
               <svg viewBox="0 0 36 36" width="100%" height="100%">
@@ -488,7 +488,7 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Bug Heatmap (Pixel blocks) */}
-        <div>
+        <div style={{ background: '#181A20', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px' }}>
           <div style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-purple)', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>glitch heatmap</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px' }}>
             {Array.from({ length: 15 }).map((_, i) => (
@@ -498,7 +498,7 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Developer Mood Board */}
-        <div>
+        <div style={{ background: '#181A20', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px' }}>
           <div style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-coral)', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>mood stamp</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {['Energetic ⚡', 'Coffee High ☕', 'Zzz Sleepy 💤'].map(mood => (
@@ -528,7 +528,7 @@ export default function MetricsDashboard() {
         </div>
 
         {/* Today's Priorities Checklist */}
-        <div>
+        <div style={{ background: '#181A20', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px' }}>
           <div style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-yellow)', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>today priorities</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {priorities.map(p => (

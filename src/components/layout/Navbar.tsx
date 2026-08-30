@@ -86,7 +86,7 @@ export default function Navbar() {
           <div className="brand-logo-container">
             <BugMascot />
           </div>
-          <span className="brand-name" style={{ fontFamily: 'var(--font-marker)' }}>BUG<span style={{ color: 'var(--accent-yellow)' }}>STUDIO</span></span>
+          <span className="brand-name">Dev<span style={{ color: 'var(--accent-yellow)' }}>Trace</span></span>
           <span className="brand-version">T-02</span>
         </div>
 

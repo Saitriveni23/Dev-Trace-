@@ -185,22 +185,22 @@ export default function Sidebar() {
   }, []);
 
   const views = [
-    { id: 'list', icon: <List size={15} />, label: 'All Sketchnotes', count: openCount, tooltip: 'Browse and manage every reported bug in a list' },
-    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Sticky Kanban', count: null, tooltip: 'Drag bugs across a Kanban board by status' },
-    { id: 'graph', icon: <GitBranch size={15} />, label: 'Dependency Graph', count: null, tooltip: 'Explore how bugs and files depend on each other' },
-    { id: 'dashboard', icon: <Layers size={15} />, label: 'Desk Dashboard', count: null, tooltip: 'See key bug metrics and stats at a glance' },
-    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'BugStudio Analytics', count: null, tooltip: 'Dive into bug trends and analytics charts' },
+    { id: 'dashboard', icon: <Layers size={15} />, label: 'Overview', count: null, tooltip: 'See key bug metrics and stats at a glance' },
+    { id: 'list', icon: <List size={15} />, label: 'Bugs', count: openCount, tooltip: 'Browse and manage every reported bug in a list' },
+    { id: 'kanban', icon: <LayoutGrid size={15} />, label: 'Board', count: null, tooltip: 'Drag bugs across a Kanban board by status' },
+    { id: 'graph', icon: <GitBranch size={15} />, label: 'Reports', count: null, tooltip: 'Explore how bugs and files depend on each other' },
+    { id: 'analytics', icon: <BarChart2 size={15} />, label: 'Analytics', count: null, tooltip: 'Dive into bug trends and analytics charts' },
     { id: 'assistant', icon: <Sparkles size={15} />, label: 'AI Assistant', count: null, tooltip: 'Chat with the AI assistant for bug triage help' },
-    { id: 'sprint', icon: <Calendar size={15} />, label: 'Sprint Planner', count: null, tooltip: 'Plan your current and upcoming sprints' },
-    { id: 'mobile', icon: <Smartphone size={15} />, label: 'Mobile Workspace', count: null, tooltip: 'Manage mobile-specific bugs and issues' },
-    { id: 'security', icon: <ShieldAlert size={15} />, label: 'Security Embargo', count: 2, tooltip: 'Review critical security vulnerabilities' },
-    { id: 'search', icon: <Search size={15} />, label: 'Notebook Search', count: null, tooltip: 'Advanced search across all your notebook contents' },
+    { id: 'team', icon: <Users size={15} />, label: 'Team', count: null, tooltip: 'Manage team and collaboration' },
+    { id: 'settings', icon: <Settings size={15} />, label: 'Settings', count: null, tooltip: 'Configure your workspace settings' },
+    { id: 'doodle', icon: <Palette size={15} />, label: 'Doodle Canvas', count: null, tooltip: 'Sketch out ideas or architectural diagrams' },
+    { id: 'github', icon: <GithubIcon size={15} />, label: 'GitHub Sync', count: null, tooltip: 'Sync bugs and issues with GitHub repositories' },
   ] as const;
 
   return (
     <aside className="sidebar" style={{ position: 'relative' }}>
       {/* Views */}
-      <div className="sidebar-section-label" style={{ fontFamily: 'var(--font-hand)' }}>Sketchbook Views</div>
+      <div className="sidebar-section-label" style={{ fontFamily: 'var(--font-hand)' }}>Workspace Views</div>
       {views.map(v => (
         <div
           key={v.id}
